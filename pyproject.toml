@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "globex-agent"
+version = "0.1.0"
+description = "Globex cross-platform shopping agent"
+requires-python = ">=3.11,<3.12"
+
+dependencies = [
+    "openai>=1.0,<3.0",
+    "python-dotenv>=1.0,<2.0",
+    "pydantic>=2.0,<3.0",
+    "pyyaml>=6.0,<7.0",
+]
+
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+]
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+asyncio_mode = "auto"
