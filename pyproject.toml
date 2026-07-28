@@ -11,6 +11,8 @@ requires-python = ">=3.11,<3.12"
 
 dependencies = [
     "fastapi>=0.115,<1.0",
+    "langchain>=1.0,<2.0",
+    "langchain-openai>=1.0,<2.0",
     "openai>=1.0,<3.0",
     "python-dotenv>=1.0,<2.0",
     "pydantic>=2.0,<3.0",
@@ -28,6 +30,10 @@ dev = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["app*"]
+
+
+[tool.setuptools.package-data]
+app = ["prompt/*.yml"]
 
 
 [tool.pytest.ini_options]
