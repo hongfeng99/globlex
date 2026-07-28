@@ -131,3 +131,182 @@ def test_missing_required_model_config(
         match="LLM_MAIN",
     ):
         llm_module.get_llm()
+
+
+def test_judge_defaults_to_main_model(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    未配置 LLM_JUDGE 时，
+    Judge 应回退到 LLM_MAIN。
+    """
+
+    created_models: list[
+        tuple[str, dict[str, Any]]
+    ] = []
+
+    def fake_init_chat_model(
+        model_name: str,
+        **kwargs: Any,
+    ) -> object:
+        created_models.append(
+            (model_name, kwargs)
+        )
+
+        return object()
+
+    monkeypatch.setattr(
+        llm_module,
+        "init_chat_model",
+        fake_init_chat_model,
+    )
+
+    monkeypatch.setenv(
+        "OPENAI_API_KEY",
+        "test-key",
+    )
+    monkeypatch.setenv(
+        "OPENAI_BASE_URL",
+        "https://example.test/v1",
+    )
+    monkeypatch.setenv(
+        "LLM_MAIN",
+        "shared-model",
+    )
+    monkeypatch.setenv(
+        "LLM_JUDGE",
+        "",
+    )
+
+    llm_module.get_judge_llm()
+
+    assert created_models[0][0] == (
+        "shared-model"
+    )
+
+
+@pytest.mark.parametrize(
+    "invalid_timeout",
+    [
+        "not-a-number",
+        "0",
+        "-1",
+    ],
+)
+def test_invalid_timeout_is_rejected(
+    monkeypatch: pytest.MonkeyPatch,
+    invalid_timeout: str,
+) -> None:
+    """
+    非数字、零或负数超时均应被拒绝。
+    """
+
+    monkeypatch.setenv(
+        "OPENAI_API_KEY",
+        "test-key",
+    )
+    monkeypatch.setenv(
+        "OPENAI_BASE_URL",
+        "https://example.test/v1",
+    )
+    monkeypatch.setenv(
+        "LLM_MAIN",
+        "main-model",
+    )
+    monkeypatch.setenv(
+        "LLM_TIMEOUT",
+        invalid_timeout,
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match="LLM_TIMEOUT",
+    ):
+        llm_module.get_llm()
+
+
+@pytest.mark.parametrize(
+    "missing_name",
+    [
+        "OPENAI_API_KEY",
+        "OPENAI_BASE_URL",
+    ],
+)
+def test_missing_openai_config_is_rejected(
+    monkeypatch: pytest.MonkeyPatch,
+    missing_name: str,
+) -> None:
+    """
+    API Key 或接口地址缺失时，
+    应返回明确的配置错误。
+    """
+
+    monkeypatch.setenv(
+        "OPENAI_API_KEY",
+        "test-key",
+    )
+    monkeypatch.setenv(
+        "OPENAI_BASE_URL",
+        "https://example.test/v1",
+    )
+    monkeypatch.setenv(
+        "LLM_MAIN",
+        "main-model",
+    )
+
+    monkeypatch.delenv(
+        missing_name,
+        raising=False,
+    )
+
+    with pytest.raises(
+        RuntimeError,
+        match=missing_name,
+    ):
+        llm_module.get_llm()
+
+
+def test_clear_llm_cache_recreates_model(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """
+    清除缓存后应重新创建模型实例。
+    """
+
+    created_models: list[object] = []
+
+    def fake_init_chat_model(
+        model_name: str,
+        **kwargs: Any,
+    ) -> object:
+        model = object()
+        created_models.append(model)
+        return model
+
+    monkeypatch.setattr(
+        llm_module,
+        "init_chat_model",
+        fake_init_chat_model,
+    )
+
+    monkeypatch.setenv(
+        "OPENAI_API_KEY",
+        "test-key",
+    )
+    monkeypatch.setenv(
+        "OPENAI_BASE_URL",
+        "https://example.test/v1",
+    )
+    monkeypatch.setenv(
+        "LLM_MAIN",
+        "main-model",
+    )
+
+    first_model = llm_module.get_llm()
+
+    llm_module.clear_llm_cache()
+
+    second_model = llm_module.get_llm()
+
+    assert first_model is not second_model
+    assert len(created_models) == 2
