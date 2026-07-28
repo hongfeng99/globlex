@@ -164,3 +164,50 @@ async def test_recall_without_user_is_semantic_only(
 
     assert total == 1
     assert raw[0]["item_id"] == "a"
+
+
+
+@pytest.mark.asyncio
+async def test_recall_overfetches_one_for_truncated(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    requested_top_k: list[int] = []
+
+    async def fake_semantic(
+        query: str,
+        platform: str,
+        top_k: int,
+    ) -> list[dict[str, Any]]:
+        requested_top_k.append(top_k)
+
+        return [
+            _raw_candidate(
+                item_id=f"item-{index}",
+                score=1.0 - index / 100,
+            )
+            for index in range(top_k)
+        ]
+
+    monkeypatch.setattr(
+        item_module,
+        "_semantic_recall",
+        fake_semantic,
+    )
+
+    raw_candidates, total_recall = (
+        await item_module._recall(
+            query="旅行收纳袋",
+            platform="amazon",
+            top_k=20,
+            user_id=None,
+        )
+    )
+
+    # 内部应多取一条，用于判断是否发生截断。
+    assert requested_top_k == [21]
+
+    # 对外仍然只返回 20 条。
+    assert len(raw_candidates) == 20
+
+    # 截断前实际获得了 21 条。
+    assert total_recall == 21

@@ -156,13 +156,18 @@ async def _recall(
 ) -> tuple[list[dict[str, Any]], int]:
     """
     并发执行语义召回和可选的个性化召回。
+
+    内部额外召回一条，用于判断是否因为 top_k
+    而截断了候选集。
     """
+
+    recall_k = top_k + 1
 
     semantic_task = asyncio.create_task(
         _semantic_recall(
             query,
             platform,
-            top_k,
+            recall_k,
         )
     )
 
@@ -171,7 +176,7 @@ async def _recall(
             _personalized_recall(
                 query,
                 platform,
-                top_k,
+                recall_k,
                 user_id,
             )
         )
@@ -181,6 +186,7 @@ async def _recall(
 
     try:
         semantic = await semantic_task
+
         personalized = (
             await personalized_task
             if personalized_task is not None
@@ -207,6 +213,7 @@ async def _recall(
             ),
             return_exceptions=True,
         )
+
         raise
 
     merged = _dedupe_and_rerank(
@@ -214,7 +221,12 @@ async def _recall(
         personalized,
     )
 
-    return merged[:top_k], len(merged)
+    total_recall = len(merged)
+
+    return (
+        merged[:top_k],
+        total_recall,
+    )
 
 
 @tool
@@ -315,7 +327,9 @@ async def item_search(
         platform=platform,
         candidates=candidates,
         total_recall=total_recall,
-        truncated=total_recall > top_k,
+        truncated=(
+            total_recall > len(candidates)
+        ),
     )
 
 

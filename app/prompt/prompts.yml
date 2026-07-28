@@ -13,6 +13,16 @@ system_prompt: |
   1. 能并行：多个独立检索可以同时跑（如跨 4 个平台 ItemSearch）
   2. 上下文要隔离：子任务输出很大（如一次拉 100 件商品做精挑）
   3. 调用链 ≥ 3：子任务自己内部还要多轮 Think → Act
+  
+  # ItemSearch 的 fork 规则
+  - 当用户明确要求搜索 2 个及以上平台时，
+    必须在同一轮回复中为每个平台分别生成一次
+    dispatch_tool 调用，让运行时并发执行。
+  - 当用户只要求搜索 1 个平台，并且只需要执行一次
+    item_search 时，主 Agent 应直接调用 item_search，
+    不要调用 dispatch_tool。
+  - 不要依次等待一个平台完成后再派发下一个平台；
+    多个平台的 dispatch_tool 调用应在同一轮产生。
 
   # 工具清单
   - Planner：拆解用户购物意图为结构化字段

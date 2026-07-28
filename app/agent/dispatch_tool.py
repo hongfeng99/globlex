@@ -5,7 +5,7 @@ from uuid import uuid4
 
 from langchain_core.messages import BaseMessage
 from langchain_core.tools import tool
-from langgraph.prebuilt import create_react_agent
+from langchain.agents import create_agent
 
 from app.agent.llm import get_llm
 from app.agent.prompts import get_system_prompt
@@ -86,10 +86,10 @@ async def dispatch_tool(
         FULL_TOOL_SET,
     )
 
-    sub_agent = create_react_agent(
+    sub_agent = create_agent(
         model=get_llm(),
         tools=FULL_TOOL_SET,
-        prompt=get_system_prompt(),
+        system_prompt=get_system_prompt(),
     )
 
     with bind_thread_context(
