@@ -1,0 +1,7 @@
+:root { font-family: system-ui, sans-serif; color: #172033; background: #f5f7fb; }
+main { max-width: 760px; margin: 48px auto; padding: 24px; }
+form { display: grid; gap: 12px; }
+textarea { min-height: 110px; padding: 14px; border: 1px solid #ccd4e0; border-radius: 10px; }
+button { justify-self: end; padding: 10px 24px; border: 0; border-radius: 8px; color: white; background: #3764e8; }
+article { margin-top: 12px; padding: 12px 16px; background: white; border-radius: 10px; }
+pre { white-space: pre-wrap; font: inherit; }

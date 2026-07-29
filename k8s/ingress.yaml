@@ -1,0 +1,26 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: globex
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/websocket-services: globex-agent
+    nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_thread_id"
+spec:
+  rules:
+    - host: globex.example.com
+      http:
+        paths:
+          - path: /ws
+            pathType: Prefix
+            backend:
+              service:
+                name: globex-agent
+                port: {number: 8000}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: globex-agent
+                port: {number: 8000}

@@ -55,8 +55,7 @@ def _load_prompts() -> dict[str, str]:
 
     prompts: dict[str, str] = {}
 
-    for name in _REQUIRED_PROMPTS:
-        value = raw_prompts[name]
+    for name, value in raw_prompts.items():
 
         if not isinstance(value, str):
             raise ValueError(
@@ -108,6 +107,24 @@ def get_shopping_summary_prompt() -> str:
     ]
 
 
+def get_session_summary_prompt() -> str:
+    return _load_prompts()[
+        "session_summary_prompt"
+    ]
+
+
+def get_tool_result_compress_prompt() -> str:
+    return _load_prompts()[
+        "tool_result_compress_prompt"
+    ]
+
+
+def get_rubric_judge_prompt() -> str:
+    return _load_prompts()[
+        "rubric_judge_prompt"
+    ]
+
+
 def clear_prompt_cache() -> None:
     """
     清空 YAML 读取缓存。
@@ -119,6 +136,9 @@ def clear_prompt_cache() -> None:
 __all__ = [
     "clear_prompt_cache",
     "get_planner_prompt",
+    "get_rubric_judge_prompt",
+    "get_session_summary_prompt",
     "get_shopping_summary_prompt",
     "get_system_prompt",
+    "get_tool_result_compress_prompt",
 ]

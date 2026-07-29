@@ -111,6 +111,29 @@ def get_judge_llm() -> BaseChatModel:
     )
 
 
+@lru_cache(maxsize=1)
+def get_lite_llm() -> BaseChatModel:
+    return _create_model(
+        model_name=(
+            os.getenv("LLM_LITE", "").strip()
+            or _required_env("LLM_MAIN")
+        ),
+        temperature=0.2,
+    )
+
+
+@lru_cache(maxsize=1)
+def get_minimal_llm() -> BaseChatModel:
+    return _create_model(
+        model_name=(
+            os.getenv("LLM_MINIMAL", "").strip()
+            or os.getenv("LLM_LITE", "").strip()
+            or _required_env("LLM_MAIN")
+        ),
+        temperature=0.1,
+    )
+
+
 def clear_llm_cache() -> None:
     """
     清空模型单例缓存。
@@ -120,10 +143,14 @@ def clear_llm_cache() -> None:
 
     get_llm.cache_clear()
     get_judge_llm.cache_clear()
+    get_lite_llm.cache_clear()
+    get_minimal_llm.cache_clear()
 
 
 __all__ = [
     "clear_llm_cache",
     "get_judge_llm",
+    "get_lite_llm",
     "get_llm",
+    "get_minimal_llm",
 ]

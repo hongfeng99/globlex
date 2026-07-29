@@ -5,6 +5,9 @@ from typing import Any
 
 from app.api.connection import manager
 from app.api.context import get_thread_id
+from app.observability.alerts import (
+    tool_rt_monitor,
+)
 
 
 class Monitor:
@@ -102,6 +105,9 @@ class Monitor:
                 "duration_ms 不能小于 0。"
             )
 
+        tool_rt_monitor.record(
+            tool_name, duration_ms
+        )
         return await self._emit(
             event="tool_end",
             message=f"{tool_name} 完成",

@@ -1,0 +1,6 @@
+FROM python:3.11-slim
+WORKDIR /app
+RUN pip install --no-cache-dir torch==2.3.0 transformers==4.44.0 fastapi==0.115.0 uvicorn==0.30.0
+COPY app/recall/reranker_service.py /app/server.py
+EXPOSE 8000
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]
