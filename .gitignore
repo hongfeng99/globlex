@@ -25,6 +25,7 @@ frontend/dist/
 # 运行时文件
 data/*
 !data/.gitkeep
+!data/demo_items.json
 
 output/*
 !output/.gitkeep

@@ -3,7 +3,9 @@ kind: Deployment
 metadata:
   name: globex-agent
 spec:
-  replicas: 3
+  # 任务状态和 WebSocket 连接当前保存在进程内；接入共享任务
+  # 存储前必须保持单副本，避免 HTTP 与 WS 落到不同 Pod。
+  replicas: 1
   selector:
     matchLabels: {app: globex-agent}
   template:
@@ -17,7 +19,7 @@ spec:
           ports:
             - {containerPort: 8000}
           readinessProbe:
-            httpGet: {path: /health, port: 8000}
+            httpGet: {path: /ready, port: 8000}
             initialDelaySeconds: 5
             periodSeconds: 5
           livenessProbe:

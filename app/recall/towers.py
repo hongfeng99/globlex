@@ -8,6 +8,11 @@ import httpx
 from dotenv import load_dotenv
 
 from app.utils.path_utils import PROJECT_ROOT
+from app.recall.local_embeddings import (
+    embed_item,
+    embed_text,
+    embedding_dimension,
+)
 
 
 load_dotenv(PROJECT_ROOT / ".env")
@@ -68,6 +73,22 @@ class TowerClient:
 
         return self._client
 
+    def _use_local_backend(self) -> bool:
+        # 显式传入 endpoint/client 的实例仍按 HTTP 工作，便于生产
+        # 服务和测试使用；全局客户端默认采用无需外部服务的本地模式。
+        if self._client is not None or any(
+            endpoint is not None
+            for endpoint in (
+                self.user_endpoint,
+                self.query_endpoint,
+                self.item_endpoint,
+            )
+        ):
+            return False
+        return os.getenv(
+            "TOWER_BACKEND", "local"
+        ).strip().lower() == "local"
+
     async def _encode(
         self,
         *,
@@ -121,6 +142,11 @@ class TowerClient:
                 "user_id 不能为空字符串。"
             )
 
+        if self._use_local_backend():
+            # 演示模式没有真实用户画像。零向量使个性化通道
+            # 保持查询排序，而不会引入由 user_id 产生的随机偏差。
+            return [0.0] * embedding_dimension()
+
         return await self._encode(
             endpoint=self._get_endpoint(
                 self.user_endpoint,
@@ -146,6 +172,9 @@ class TowerClient:
                 "query 不能为空字符串。"
             )
 
+        if self._use_local_backend():
+            return embed_text(normalized_query)
+
         return await self._encode(
             endpoint=self._get_endpoint(
                 self.query_endpoint,
@@ -168,6 +197,9 @@ class TowerClient:
             raise ValueError(
                 "item 不能为空。"
             )
+
+        if self._use_local_backend():
+            return embed_item(item)
 
         return await self._encode(
             endpoint=self._get_endpoint(

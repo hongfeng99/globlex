@@ -4,6 +4,34 @@ import httpx
 import pytest
 
 from app.recall.towers import TowerClient
+from app.recall.local_embeddings import (
+    embedding_dimension,
+)
+
+
+@pytest.mark.asyncio
+async def test_local_tower_needs_no_http_service(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("TOWER_BACKEND", "local")
+    client = TowerClient()
+
+    query_vector = await client.encode_query(
+        "旅行收纳袋"
+    )
+    item_vector = await client.encode_item(
+        {
+            "title": "防水旅行收纳袋",
+            "category": "旅行收纳",
+        }
+    )
+    user_vector = await client.encode_user("user-1")
+
+    assert len(query_vector) == embedding_dimension()
+    assert len(item_vector) == embedding_dimension()
+    assert user_vector == [
+        0.0
+    ] * embedding_dimension()
 
 
 @pytest.mark.asyncio

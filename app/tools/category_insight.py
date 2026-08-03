@@ -4,6 +4,7 @@ import asyncio
 import os
 import re
 import time
+import logging
 from functools import lru_cache
 from typing import Any, Literal, Protocol
 
@@ -17,6 +18,7 @@ from app.recall.category_norm import (
 )
 from app.recall.reranker import reranker_client
 from app.recall.towers import tower_client
+from app.config import env_bool
 
 
 INDEX_NAME = "globex_category_kb"
@@ -32,6 +34,7 @@ SEMANTIC_TOKENS = {
     "送",
     "氛围",
 }
+logger = logging.getLogger(__name__)
 
 
 def should_disable_bm25(
@@ -173,24 +176,36 @@ async def _recall_cards(
     category: str,
     top_k: int,
 ) -> list[CategoryCard]:
-    embedding = await tower_client.encode_query(
-        category
-    )
-    body = _build_hybrid_body(
-        category,
-        embedding,
-    )
+    try:
+        embedding = await tower_client.encode_query(
+            category
+        )
+        body = _build_hybrid_body(
+            category,
+            embedding,
+        )
 
-    response = await asyncio.to_thread(
-        _get_kb_client().search,
-        index=INDEX_NAME,
-        body=body,
-        params={
-            "search_pipeline": (
-                "globex_hybrid_pipeline"
-            )
-        },
-    )
+        response = await asyncio.to_thread(
+            _get_kb_client().search,
+            index=INDEX_NAME,
+            body=body,
+            params={
+                "search_pipeline": (
+                    "globex_hybrid_pipeline"
+                )
+            },
+        )
+    except Exception as exc:
+        if env_bool(
+            "CATEGORY_KB_REQUIRED",
+            False,
+        ):
+            raise
+        logger.warning(
+            "OpenSearch 品类知识库不可用，返回空洞察：%s",
+            exc,
+        )
+        return []
     hits = response.get(
         "hits",
         {},

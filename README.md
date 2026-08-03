@@ -21,6 +21,7 @@ globex-agent/
 │
 ├── app/                                   # 后端业务代码主包
 │   ├── __init__.py                        # 声明 app 为 Python 包
+│   ├── config.py                          # 统一解析并校验布尔、整数和浮点环境变量
 │   │
 │   ├── agent/                             # AgentLoop、模型、提示词、fork 与工具注册
 │   │   ├── __init__.py                    # 声明 Agent 子包
@@ -57,6 +58,8 @@ globex-agent/
 │   │   ├── __init__.py                    # 声明召回子包
 │   │   ├── towers.py                      # User、Query、Item 三塔向量服务统一异步客户端
 │   │   ├── ann.py                         # Faiss ANN 索引和商品元数据访问
+│   │   ├── local_embeddings.py            # 无外部服务时使用的本地确定性文本向量
+│   │   ├── demo_index.py                  # 从演示商品目录生成本地 Faiss 索引
 │   │   ├── category_kb.py                 # CategoryCard 品类知识卡片数据模型
 │   │   ├── category_norm.py               # 品类名称别名归一化
 │   │   ├── reranker.py                    # 远程 Cross-Encoder 重排服务客户端
@@ -162,6 +165,9 @@ globex-agent/
 │   ├── pnpm-lock.yaml                     # pnpm 锁定的前端依赖版本
 │   ├── pnpm-workspace.yaml                # pnpm 工作区与允许构建的依赖配置
 │   ├── tsconfig.json                      # TypeScript 严格模式和 JSX 配置
+│   ├── vite.config.ts                     # React 插件及 /api、/ws 后端开发代理
+│   ├── Dockerfile                         # 构建前端并交给 Nginx 托管
+│   ├── nginx.conf                         # API 与 WebSocket 反向代理配置
 │   └── src/
 │       ├── main.tsx                       # 创建 React Root 并挂载 App
 │       ├── App.tsx                        # 任务提交、进度事件和最终结果界面
@@ -170,7 +176,7 @@ globex-agent/
 │
 ├── docker/                                # 本地全栈容器编排
 │   ├── .env.example                       # Compose 服务间地址和构建目标示例
-│   ├── docker-compose.yml                 # Agent、OpenSearch、Redis、vLLM、Reranker 编排
+│   ├── docker-compose.yml                 # 前端、Agent、OpenSearch、Redis、vLLM、Reranker 编排
 │   ├── Dockerfile                         # Agent dev/prod 多阶段镜像
 │   └── Dockerfile.reranker                # 独立 GPU Reranker 服务镜像
 │
@@ -181,6 +187,7 @@ globex-agent/
 │
 ├── scripts/                               # 数据生产、评测、初始化和预热脚本
 │   ├── setup_pipeline.sh                  # 创建 OpenSearch Hybrid Search Pipeline
+│   ├── build_demo_index.py                # 生成开箱即用的演示商品 Faiss 索引
 │   ├── warmup_vllm.py                     # 用代表性请求预热 vLLM KV Cache
 │   ├── etl/
 │   │   ├── extract_card.py                # 用 Judge 模型从原始资料抽取 CategoryCard 字段
@@ -252,16 +259,19 @@ globex-agent/
 
 ## 本地启动
 
-### 1. 安装后端依赖
+### 1. 安装后端依赖（Conda）
 
-```bash
-uv sync --all-extras
+```powershell
+conda activate globlex-env
+python -m pip install -e ".[dev]"
 ```
 
-复制并填写环境变量：
+也可以使用 `uv sync --all-extras` 创建项目自己的 `.venv`。
 
-```bash
-cp .env.example .env
+复制并填写环境变量（PowerShell）：
+
+```powershell
+Copy-Item .env.example .env
 ```
 
 至少需要配置模型服务：
@@ -272,10 +282,20 @@ OPENAI_API_KEY=your-key
 LLM_MAIN=your-model
 ```
 
+`.env.example` 默认启用本地向量编码，并会在首次检索时从
+`data/demo_items.json` 自动生成演示索引。也可以提前生成：
+
+```powershell
+python scripts/build_demo_index.py
+```
+
+演示目录只用于验证完整链路，不代表平台实时价格。接入真实
+商品源后，应关闭 `ANN_AUTO_BUILD_DEMO` 并生成生产索引。
+
 启动 FastAPI：
 
-```bash
-uv run uvicorn app.api.server:app --reload
+```powershell
+python -m uvicorn app.api.server:app --reload --port 8000
 ```
 
 ### 2. 启动前端
@@ -286,10 +306,28 @@ pnpm install
 pnpm dev
 ```
 
+如果 Windows 终端能识别 `node`/`npm`、但不能识别全局
+`pnpm`，可以直接使用项目已经安装的依赖启动：
+
+```powershell
+npm run dev
+```
+
+干净环境还没有 `node_modules` 时，可先通过 npm 临时调用项目
+固定版本的 pnpm，无需全局安装：
+
+```powershell
+npx --yes pnpm@11.9.0 install
+npm run dev
+```
+
+访问 `http://localhost:5173`。Vite 会自动把 `/api` 和 `/ws`
+代理到 `http://127.0.0.1:8000`；可通过 `VITE_BACKEND_URL` 修改。
+
 ### 3. 运行测试
 
 ```bash
-uv run pytest -q
+python -m pytest -q
 ```
 
 ### 4. 使用 Docker Compose
@@ -300,7 +338,9 @@ cp .env.example .env
 docker compose up --build
 ```
 
-该方式会统一启动 Agent、OpenSearch、Redis、vLLM 和 Reranker。vLLM 与 Reranker 的 GPU 配置需要根据本机显存和模型大小调整。
+该方式会统一启动前端、Agent、OpenSearch、Redis、vLLM 和
+Reranker，页面地址为 `http://localhost:3000`。vLLM 与
+Reranker 的 GPU 配置需要根据本机显存和模型大小调整。
 
 ## 运行时目录说明
 
@@ -309,4 +349,3 @@ docker compose up --build
 - `uploaded/<thread_id>/`：保存某个任务上传的原始文件。
 - `.env`：保存真实密钥，只能本地使用。
 - `frontend/dist/`：前端生产构建产物，由 Vite 自动生成。
-

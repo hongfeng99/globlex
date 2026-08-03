@@ -1,0 +1,134 @@
+[
+  {
+    "item_id": "amazon-travel-001",
+    "platform": "amazon",
+    "title": "轻量防水旅行收纳袋六件套",
+    "category": "旅行收纳",
+    "price": 25.99,
+    "currency": "USD",
+    "rating": 4.6,
+    "sales": 3200,
+    "attributes": {"material": "尼龙", "pack_size": 6, "feature": "防水 轻量"}
+  },
+  {
+    "item_id": "shopee-travel-001",
+    "platform": "shopee",
+    "title": "旅行行李箱衣物压缩收纳袋七件套",
+    "category": "旅行收纳",
+    "price": 68.0,
+    "currency": "CNY",
+    "rating": 4.7,
+    "sales": 8500,
+    "attributes": {"material": "涤纶", "pack_size": 7, "feature": "压缩 防尘"}
+  },
+  {
+    "item_id": "aliexpress-travel-001",
+    "platform": "aliexpress",
+    "title": "便携旅行收纳包套装 防水可折叠",
+    "category": "旅行收纳",
+    "price": 11.5,
+    "currency": "USD",
+    "rating": 4.5,
+    "sales": 5100,
+    "attributes": {"material": "牛津布", "pack_size": 6, "feature": "可折叠"}
+  },
+  {
+    "item_id": "ebay-travel-001",
+    "platform": "ebay",
+    "title": "Packing Cubes Lightweight Travel Organizer",
+    "category": "travel organizer 旅行收纳",
+    "price": 18.9,
+    "currency": "USD",
+    "rating": 4.4,
+    "sales": 1200,
+    "attributes": {"material": "nylon", "pack_size": 5, "feature": "lightweight"}
+  },
+  {
+    "item_id": "amazon-mug-001",
+    "platform": "amazon",
+    "title": "双层真空保温咖啡杯 便携防漏",
+    "category": "咖啡杯 保温杯",
+    "price": 22.0,
+    "currency": "USD",
+    "rating": 4.8,
+    "sales": 6700,
+    "attributes": {"material": "304不锈钢", "capacity_ml": 450, "feature": "防漏"}
+  },
+  {
+    "item_id": "shopee-mug-001",
+    "platform": "shopee",
+    "title": "陶瓷咖啡杯带盖办公室马克杯",
+    "category": "咖啡杯 马克杯",
+    "price": 39.9,
+    "currency": "CNY",
+    "rating": 4.6,
+    "sales": 4300,
+    "attributes": {"material": "陶瓷", "capacity_ml": 380, "feature": "带盖"}
+  },
+  {
+    "item_id": "aliexpress-mug-001",
+    "platform": "aliexpress",
+    "title": "Stainless Steel Insulated Coffee Travel Mug",
+    "category": "coffee mug 咖啡杯",
+    "price": 9.8,
+    "currency": "USD",
+    "rating": 4.3,
+    "sales": 2900,
+    "attributes": {"material": "stainless steel", "capacity_ml": 400, "feature": "insulated"}
+  },
+  {
+    "item_id": "ebay-mug-001",
+    "platform": "ebay",
+    "title": "Reusable Ceramic Coffee Mug with Silicone Lid",
+    "category": "coffee mug 咖啡杯",
+    "price": 14.5,
+    "currency": "USD",
+    "rating": 4.5,
+    "sales": 980,
+    "attributes": {"material": "ceramic", "capacity_ml": 350, "feature": "reusable"}
+  },
+  {
+    "item_id": "amazon-headphone-001",
+    "platform": "amazon",
+    "title": "无线降噪头戴式蓝牙耳机",
+    "category": "蓝牙耳机 降噪耳机",
+    "price": 79.99,
+    "currency": "USD",
+    "rating": 4.6,
+    "sales": 9100,
+    "attributes": {"battery_hours": 45, "feature": "主动降噪"}
+  },
+  {
+    "item_id": "shopee-headphone-001",
+    "platform": "shopee",
+    "title": "入耳式无线蓝牙耳机 通话降噪",
+    "category": "蓝牙耳机",
+    "price": 129.0,
+    "currency": "CNY",
+    "rating": 4.5,
+    "sales": 12000,
+    "attributes": {"battery_hours": 30, "feature": "通话降噪"}
+  },
+  {
+    "item_id": "aliexpress-headphone-001",
+    "platform": "aliexpress",
+    "title": "Wireless Bluetooth Earbuds Noise Cancelling",
+    "category": "bluetooth earbuds 蓝牙耳机",
+    "price": 19.9,
+    "currency": "USD",
+    "rating": 4.4,
+    "sales": 7600,
+    "attributes": {"battery_hours": 28, "feature": "noise cancelling"}
+  },
+  {
+    "item_id": "ebay-headphone-001",
+    "platform": "ebay",
+    "title": "Over Ear Bluetooth Headphones with ANC",
+    "category": "headphones 降噪耳机",
+    "price": 49.0,
+    "currency": "USD",
+    "rating": 4.3,
+    "sales": 1600,
+    "attributes": {"battery_hours": 40, "feature": "ANC"}
+  }
+]

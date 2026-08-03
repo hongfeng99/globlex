@@ -105,6 +105,46 @@ async def test_missing_connection_is_ignored() -> None:
 
 
 @pytest.mark.asyncio
+async def test_events_are_replayed_after_connect() -> None:
+    manager = ConnectionManager()
+    payload = {
+        "event": "task_result",
+        "data": {"final_answer": "done"},
+    }
+
+    assert not await manager.send_to_thread(
+        payload=payload,
+        thread_id="thread-late",
+    )
+
+    websocket = FakeWebSocket()
+    await manager.connect(
+        websocket=websocket,  # type: ignore[arg-type]
+        thread_id="thread-late",
+    )
+
+    assert websocket.sent_payloads == [payload]
+
+
+@pytest.mark.asyncio
+async def test_clear_history_prevents_old_replay() -> None:
+    manager = ConnectionManager()
+    await manager.send_to_thread(
+        payload={"event": "old"},
+        thread_id="thread-reused",
+    )
+    await manager.clear_history("thread-reused")
+
+    websocket = FakeWebSocket()
+    await manager.connect(
+        websocket=websocket,  # type: ignore[arg-type]
+        thread_id="thread-reused",
+    )
+
+    assert websocket.sent_payloads == []
+
+
+@pytest.mark.asyncio
 async def test_old_disconnect_does_not_remove_new_connection() -> None:
     """
     验证页面重连后：

@@ -15,6 +15,7 @@ from app.agent.fork_guard import (
 from app.agent.llm import get_llm
 from app.agent.prompts import get_system_prompt
 from app.api.monitor import monitor
+from app.config import env_float, env_int
 from app.utils.thread_ctx import (
     bind_thread_context,
     require_session_dir,
@@ -79,7 +80,13 @@ async def dispatch_tool(demands: str) -> str:
     )
 
     try:
-        with enter_fork(max_depth=2):
+        with enter_fork(
+            max_depth=env_int(
+                "FORK_MAX_DEPTH",
+                2,
+                minimum=1,
+            )
+        ):
             with bind_thread_context(
                 thread_id=sub_thread_id,
                 session_dir=parent_session_dir,
@@ -102,12 +109,16 @@ async def dispatch_tool(demands: str) -> str:
                             }
                         },
                     ),
-                    timeout=90,
+                    timeout=env_float(
+                        "SUB_AGENT_TIMEOUT_SEC",
+                        90,
+                        minimum=1,
+                    ),
                 )
     except ForkLimitExceeded as exc:
         return f"子任务未执行：{exc}"
     except TimeoutError:
-        return "子任务执行超过 90 秒，已停止。"
+        return "子任务执行超时，已停止。"
 
     return _last_message_content(result)
 

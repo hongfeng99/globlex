@@ -10,6 +10,7 @@ import numpy as np
 from dotenv import load_dotenv
 
 from app.utils.path_utils import PROJECT_ROOT
+from app.config import env_bool
 
 
 load_dotenv(PROJECT_ROOT / ".env")
@@ -90,6 +91,17 @@ class AnnClient:
             return
 
         index_path = self._resolve_index_path()
+
+        if not index_path.is_file():
+            if env_bool(
+                "ANN_AUTO_BUILD_DEMO",
+                False,
+            ):
+                from app.recall.demo_index import (
+                    build_demo_index,
+                )
+
+                build_demo_index(index_path=index_path)
 
         if not index_path.is_file():
             raise FileNotFoundError(

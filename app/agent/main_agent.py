@@ -12,6 +12,7 @@ from app.agent.tool_registry import FULL_TOOL_SET
 from app.api.monitor import monitor
 from app.budget.limits import get_user_token_limit
 from app.budget.token_budget import init_budget
+from app.config import env_float, env_int
 from app.memory.store import preference_store
 from app.memory.injector import inject_strategies
 from app.harness.setup import setup_harness
@@ -71,26 +72,40 @@ async def run_main_agent(
     *,
     thread_id: str,
     user_id: str | None = None,
-    timeout_seconds: float = 300,
+    timeout_seconds: float | None = None,
 ) -> str:
-    harness = setup_harness()
-    harness_context = await harness.run(
-        "on_session_start",
-        {
-            "query": user_message,
-            "original_query": user_message,
-            "thread_id": thread_id,
-            "user_id": user_id,
-        },
+    effective_timeout = (
+        timeout_seconds
+        if timeout_seconds is not None
+        else env_float(
+            "AGENT_TIMEOUT_SEC",
+            300,
+            minimum=1,
+        )
     )
-    agent = await build_main_agent(
-        user_id=user_id,
-        query=user_message,
-    )
-    init_budget(
-        get_user_token_limit(user_id)
+    recursion_limit = env_int(
+        "AGENT_LOOP_MAX_ITERATIONS",
+        30,
+        minimum=1,
     )
     try:
+        harness = setup_harness()
+        harness_context = await harness.run(
+            "on_session_start",
+            {
+                "query": user_message,
+                "original_query": user_message,
+                "thread_id": thread_id,
+                "user_id": user_id,
+            },
+        )
+        agent = await build_main_agent(
+            user_id=user_id,
+            query=user_message,
+        )
+        init_budget(
+            get_user_token_limit(user_id)
+        )
         result = await asyncio.wait_for(
             agent.ainvoke(
                 {
@@ -102,10 +117,10 @@ async def run_main_agent(
                     "configurable": {
                         "thread_id": thread_id
                     },
-                    "recursion_limit": 30,
+                    "recursion_limit": recursion_limit,
                 },
             ),
-            timeout=timeout_seconds,
+            timeout=effective_timeout,
         )
         final_answer = _final_content(result)
         await harness.run(

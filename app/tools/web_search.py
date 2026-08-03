@@ -24,9 +24,9 @@ async def web_search(
         "TAVILY_API_KEY", ""
     ).strip()
     if not api_key:
-        raise RuntimeError(
-            "缺少环境变量 TAVILY_API_KEY。"
-        )
+        # Web 搜索是增强能力，不应因为未配置可选 API 而阻断
+        # 本地购物主链路。
+        return []
 
     max_results = max(1, min(max_results, 10))
     async with httpx.AsyncClient(

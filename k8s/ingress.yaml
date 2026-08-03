@@ -6,7 +6,6 @@ metadata:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/websocket-services: globex-agent
-    nginx.ingress.kubernetes.io/upstream-hash-by: "$arg_thread_id"
 spec:
   rules:
     - host: globex.example.com

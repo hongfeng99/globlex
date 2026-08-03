@@ -33,7 +33,7 @@ services:
       NVIDIA_VISIBLE_DEVICES: "0"
     command:
       - --model
-      - Qwen/Qwen3-35B-A3B
+      - ${VLLM_MODEL:-Qwen/Qwen3-35B-A3B}
       - --served-model-name
       - globex-main
       - --tensor-parallel-size
@@ -77,13 +77,16 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
       target: ${BUILD_TARGET:-prod}
-    env_file: [../.env]
     environment:
       <<: *common-env
       OPENAI_BASE_URL: http://vllm:8000/v1
-      OPENAI_MODEL: globex-main
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-local-vllm}
+      LLM_MAIN: globex-main
+      LLM_JUDGE: globex-main
+      ANN_INDEX_PATH: /app/data/item_index.faiss
+      TOWER_BACKEND: local
       OPENSEARCH_HOST: opensearch
-      STORE_REDIS_URL: redis://redis:6379/2
+      CATEGORY_KB_REQUIRED: "false"
       RERANKER_ENDPOINT: http://reranker:8000/rerank
     ports: ["8000:8000"]
     depends_on:
@@ -96,7 +99,20 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+    volumes:
+      - agent-output:/app/output
+      - agent-uploaded:/app/uploaded
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    ports: ["3000:80"]
+    depends_on:
+      agent: {condition: service_healthy}
 
 volumes:
   opensearch-data:
   redis-data:
+  agent-output:
+  agent-uploaded:

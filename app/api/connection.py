@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import asyncio
+from collections import defaultdict, deque
 from typing import Any
 
 from fastapi import WebSocket
+
+from app.config import env_int
 
 
 class ConnectionManager:
@@ -22,6 +25,20 @@ class ConnectionManager:
 
         # 防止多个协程同时修改 active。
         self._lock = asyncio.Lock()
+
+        # 保存最近事件，使 POST 创建任务后才建立的 WebSocket
+        # 也能收到任务启动阶段产生的消息和最终结果。
+        self._history: dict[
+            str, deque[dict[str, Any]]
+        ] = defaultdict(
+            lambda: deque(
+                maxlen=env_int(
+                    "WS_EVENT_BUFFER_SIZE",
+                    200,
+                    minimum=1,
+                )
+            )
+        )
 
     @staticmethod
     def _normalize_thread_id(
@@ -58,10 +75,28 @@ class ConnectionManager:
 
         await websocket.accept()
 
-        async with self._lock:
-            self.active[
-                normalized_thread_id
-            ] = websocket
+        # 先重放积压事件，再把连接标记为实时连接。循环读取可以
+        # 覆盖重放期间新产生的事件，避免出现时间窗口。
+        replayed = 0
+        while True:
+            async with self._lock:
+                history = self._history.get(
+                    normalized_thread_id
+                )
+                pending = (
+                    list(history)[replayed:]
+                    if history is not None
+                    else []
+                )
+                if not pending:
+                    self.active[
+                        normalized_thread_id
+                    ] = websocket
+                    break
+
+            for payload in pending:
+                await websocket.send_json(payload)
+            replayed += len(pending)
 
     async def disconnect(
         self,
@@ -117,6 +152,9 @@ class ConnectionManager:
         # 不要在发送网络消息期间一直占用锁，
         # 否则慢连接可能阻塞其他连接操作。
         async with self._lock:
+            self._history[
+                normalized_thread_id
+            ].append(dict(payload))
             websocket = self.active.get(
                 normalized_thread_id
             )
@@ -138,6 +176,19 @@ class ConnectionManager:
             return False
 
         return True
+
+    async def clear_history(
+        self,
+        thread_id: str,
+    ) -> None:
+        normalized_thread_id = (
+            self._normalize_thread_id(thread_id)
+        )
+        async with self._lock:
+            self._history.pop(
+                normalized_thread_id,
+                None,
+            )
 
     async def is_connected(
         self,

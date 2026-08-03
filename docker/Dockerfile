@@ -5,6 +5,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
 COPY pyproject.toml ./
 COPY app ./app
 RUN pip install --no-cache-dir .
+COPY scripts ./scripts
+COPY data/demo_items.json ./data/demo_items.json
+RUN python scripts/build_demo_index.py
 
 FROM base AS dev
 ENV AGENT_LOOP_MAX_ITERATIONS=100 \
