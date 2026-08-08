@@ -18,6 +18,10 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel, Field, field_validator
 
 from app.agent.main_agent import run_main_agent
+from app.config import env_bool
+from app.recall.category_kb_admin import (
+    get_category_kb_status,
+)
 from app.api.connection import manager
 from app.utils.path_utils import (
     create_session_dir,
@@ -129,9 +133,25 @@ async def health() -> dict[str, str]:
 
 
 @app.get("/ready")
-async def ready() -> dict[str, str]:
-    # 进程级就绪检查；外部依赖采用按工具降级，不阻止 API 启动。
-    return {"status": "ready"}
+async def ready() -> dict[str, object]:
+    category_kb = await asyncio.to_thread(
+        get_category_kb_status
+    )
+    if (
+        env_bool("CATEGORY_KB_REQUIRED", False)
+        and not category_kb["available"]
+    ):
+        raise HTTPException(
+            status_code=503,
+            detail={
+                "status": "not_ready",
+                "category_kb": category_kb,
+            },
+        )
+    return {
+        "status": "ready",
+        "category_kb": category_kb,
+    }
 
 
 @app.post("/api/task")

@@ -12,7 +12,9 @@ from app.recall.demo_index import (
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="构建本地演示商品 FAISS 索引。"
+        description=(
+            "从离线模拟商品目录构建本地 FAISS 索引。"
+        )
     )
     parser.add_argument(
         "--catalog",
@@ -24,14 +26,21 @@ if __name__ == "__main__":
         type=Path,
         default=DEFAULT_INDEX_PATH,
     )
+    parser.add_argument(
+        "--backend",
+        choices=("sentence_transformers", "hash", "local"),
+        default=None,
+        help="覆盖 TOWER_BACKEND；local 是 hash 的兼容别名。",
+    )
     arguments = parser.parse_args()
     index_path, metadata_path, count = (
         build_demo_index(
             arguments.catalog,
             arguments.output,
+            backend_name=arguments.backend,
         )
     )
     print(
-        f"已写入 {count} 件演示商品："
+        f"已写入 {count} 件离线模拟商品："
         f"{index_path} / {metadata_path}"
     )

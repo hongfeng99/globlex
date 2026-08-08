@@ -65,6 +65,7 @@ def test_main_and_child_share_cached_llm(
                 ),
                 "temperature": 0.3,
                 "timeout": 30.0,
+                "max_retries": 2,
             },
         )
     ]
@@ -116,6 +117,38 @@ def test_judge_uses_stable_model(
     assert created_models[0][1][
         "temperature"
     ] == 0.0
+
+
+def test_qwen_provider_disables_thinking_for_tool_choice(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    captured: dict[str, Any] = {}
+
+    def fake_init_chat_model(
+        model_name: str,
+        **kwargs: Any,
+    ) -> object:
+        captured.update(kwargs)
+        return object()
+
+    monkeypatch.setattr(
+        llm_module,
+        "init_chat_model",
+        fake_init_chat_model,
+    )
+    monkeypatch.setenv("OPENAI_API_KEY", "test-key")
+    monkeypatch.setenv(
+        "OPENAI_BASE_URL",
+        "https://example.cn-beijing.maas.aliyuncs.com/v1",
+    )
+    monkeypatch.setenv("LLM_MAIN", "Qwen/Qwen3.5-35B-A3B")
+    monkeypatch.setenv("LLM_ENABLE_THINKING", "false")
+
+    llm_module.get_llm()
+
+    assert captured["extra_body"] == {
+        "enable_thinking": False
+    }
 
 
 def test_missing_required_model_config(

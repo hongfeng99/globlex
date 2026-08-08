@@ -9,13 +9,18 @@ from langchain_core.messages import BaseMessage
 from app.agent.llm import get_llm
 from app.agent.prompts import get_system_prompt
 from app.agent.tool_registry import FULL_TOOL_SET
+from app.agent.middleware import AGENT_MIDDLEWARE
+from app.agent.offline_fallback import build_clarification
+from app.agent.request_context import bind_request_context
 from app.api.monitor import monitor
 from app.budget.limits import get_user_token_limit
 from app.budget.token_budget import init_budget
 from app.config import env_float, env_int
 from app.memory.store import preference_store
+from app.memory.context import bind_user_context
 from app.memory.injector import inject_strategies
 from app.harness.setup import setup_harness
+from app.harness.phase_machine import Phase, phase_machine
 
 
 def _final_content(result: dict[str, Any]) -> str:
@@ -64,6 +69,7 @@ async def build_main_agent(
         model=get_llm(),
         tools=FULL_TOOL_SET,
         system_prompt=system_prompt,
+        middleware=AGENT_MIDDLEWARE,
     )
 
 
@@ -88,6 +94,8 @@ async def run_main_agent(
         30,
         minimum=1,
     )
+    harness = None
+    harness_context: dict[str, Any] = {}
     try:
         harness = setup_harness()
         harness_context = await harness.run(
@@ -99,6 +107,18 @@ async def run_main_agent(
                 "user_id": user_id,
             },
         )
+        clarification = build_clarification(user_message)
+        if clarification is not None:
+            await harness.run(
+                "on_session_end",
+                {
+                    **harness_context,
+                    "final_answer": clarification,
+                    "trajectory": [],
+                },
+            )
+            await monitor.report_task_result(clarification)
+            return clarification
         agent = await build_main_agent(
             user_id=user_id,
             query=user_message,
@@ -106,22 +126,25 @@ async def run_main_agent(
         init_budget(
             get_user_token_limit(user_id)
         )
-        result = await asyncio.wait_for(
-            agent.ainvoke(
-                {
-                    "messages": [
-                        ("user", user_message)
-                    ]
-                },
-                config={
-                    "configurable": {
-                        "thread_id": thread_id
-                    },
-                    "recursion_limit": recursion_limit,
-                },
-            ),
-            timeout=effective_timeout,
-        )
+        with bind_request_context(user_message):
+            with bind_user_context(user_id):
+                with phase_machine.bind(Phase.PLANNING):
+                    result = await asyncio.wait_for(
+                        agent.ainvoke(
+                            {
+                                "messages": [
+                                    ("user", user_message)
+                                ]
+                            },
+                            config={
+                                "configurable": {
+                                    "thread_id": thread_id
+                                },
+                                "recursion_limit": recursion_limit,
+                            },
+                        ),
+                        timeout=effective_timeout,
+                    )
         final_answer = _final_content(result)
         await harness.run(
             "on_session_end",

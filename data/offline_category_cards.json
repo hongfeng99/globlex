@@ -1,0 +1,1082 @@
+[
+  {
+    "card_id": "cycling-kit-bestseller",
+    "category": "骑行套装",
+    "card_type": "bestseller",
+    "summary": "典型组成：骑行上衣、背带骑行裤、骑行手套",
+    "raw_evidence": [
+      "青岚科技 长袖训练套装 骑行套装 速干聚酯纤维 2XL 3件套|468.71|离线模拟数据中评分 4.9，销量 3413",
+      "轻舟工坊 短袖竞速套装 骑行套装 锦纶弹力面料 2XL 3件套|588.33|离线模拟数据中评分 4.9，销量 3041",
+      "星驰工坊 耐力骑行套装 速干聚酯纤维 2XL 3件套|713.40|离线模拟数据中评分 4.8，销量 10171",
+      "原野实验室 耐力骑行套装 透气网眼面料 M 3件套|357.85|离线模拟数据中评分 4.8，销量 8483",
+      "星驰工坊 耐力骑行套装 透气网眼面料 L 3件套|279.66|离线模拟数据中评分 4.8，销量 8154"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "cycling-kit-attribute-material",
+    "category": "骑行套装",
+    "card_type": "attribute",
+    "summary": "材质：速干聚酯纤维 34% / 锦纶弹力面料 34% / 透气网眼面料 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "cycling-kit-attribute-feature",
+    "category": "骑行套装",
+    "card_type": "attribute",
+    "summary": "功能：3D坐垫 20% / 高弹贴身 20% / 反光条 16% / UPF50+防晒 15% / 吸湿排汗 14% / 后置口袋 14%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "cycling-kit-price-budget",
+    "category": "骑行套装",
+    "card_type": "price_range",
+    "summary": "便宜款 145.39-357.85 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-kit-price-mid",
+    "category": "骑行套装",
+    "card_type": "price_range",
+    "summary": "中档 357.85-575.05 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-kit-price-premium",
+    "category": "骑行套装",
+    "card_type": "price_range",
+    "summary": "高端 575.05-917.46 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-jersey-bestseller",
+    "category": "骑行服",
+    "card_type": "bestseller",
+    "summary": "热销关注点：吸湿排汗、全开拉链、防滑下摆、反光标识、三联后袋",
+    "raw_evidence": [
+      "云帆制造 宽松版骑行服 聚酯纤维 S|217.37|离线模拟数据中评分 4.9，销量 10313",
+      "远峰设计 短袖骑行服 锦纶氨纶混纺 M|338.76|离线模拟数据中评分 4.8，销量 8476",
+      "轻舟工坊 长袖骑行服 聚酯纤维 M|436.40|离线模拟数据中评分 4.8，销量 2271",
+      "轻舟工坊 短袖骑行服 蜂窝速干布 S|106.06|离线模拟数据中评分 4.8，销量 2079",
+      "原野实验室 宽松版骑行服 锦纶氨纶混纺 2XL|151.81|离线模拟数据中评分 4.7，销量 11964"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "cycling-jersey-attribute-material",
+    "category": "骑行服",
+    "card_type": "attribute",
+    "summary": "材质：蜂窝速干布 34% / 聚酯纤维 34% / 锦纶氨纶混纺 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "cycling-jersey-attribute-feature",
+    "category": "骑行服",
+    "card_type": "attribute",
+    "summary": "功能：吸湿排汗 22% / 反光标识 21% / 防滑下摆 20% / 全开拉链 19% / 三联后袋 18%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "cycling-jersey-price-budget",
+    "category": "骑行服",
+    "card_type": "price_range",
+    "summary": "便宜款 78.41-178.14 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-jersey-price-mid",
+    "category": "骑行服",
+    "card_type": "price_range",
+    "summary": "中档 178.14-296.32 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-jersey-price-premium",
+    "category": "骑行服",
+    "card_type": "price_range",
+    "summary": "高端 296.32-501.59 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-helmet-bestseller",
+    "category": "骑行头盔",
+    "card_type": "bestseller",
+    "summary": "热销关注点：多孔通风、旋钮调节、可拆洗内衬、夜间反光、磁吸扣",
+    "raw_evidence": [
+      "远峰设计 通勤轻量头盔 骑行头盔 ABS外壳+EPS内衬 M/L|869.43|离线模拟数据中评分 4.9，销量 9151",
+      "远峰设计 公路一体成型头盔 骑行头盔 ABS外壳+EPS内衬 M|734.62|离线模拟数据中评分 4.9，销量 1434",
+      "凌风实验室 通勤轻量头盔 骑行头盔 ABS外壳+EPS内衬 M/L|680.16|离线模拟数据中评分 4.8，销量 8552",
+      "逐光装备 通勤轻量头盔 骑行头盔 碳纤维复合材料 M/L|425.12|离线模拟数据中评分 4.8，销量 7779",
+      "凌风实验室 公路一体成型头盔 骑行头盔 ABS外壳+EPS内衬 L|647.35|离线模拟数据中评分 4.8，销量 7405"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "cycling-helmet-attribute-material",
+    "category": "骑行头盔",
+    "card_type": "attribute",
+    "summary": "材质：PC外壳+EPS内衬 34% / 碳纤维复合材料 34% / ABS外壳+EPS内衬 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "cycling-helmet-attribute-feature",
+    "category": "骑行头盔",
+    "card_type": "attribute",
+    "summary": "功能：夜间反光 21% / 可拆洗内衬 20% / 多孔通风 20% / 旋钮调节 20% / 磁吸扣 19%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "cycling-helmet-price-budget",
+    "category": "骑行头盔",
+    "card_type": "price_range",
+    "summary": "便宜款 190.70-502.53 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-helmet-price-mid",
+    "category": "骑行头盔",
+    "card_type": "price_range",
+    "summary": "中档 502.53-798.13 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-helmet-price-premium",
+    "category": "骑行头盔",
+    "card_type": "price_range",
+    "summary": "高端 798.13-1183.84 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-gloves-bestseller",
+    "category": "骑行手套",
+    "card_type": "bestseller",
+    "summary": "热销关注点：减震掌垫、触屏指尖、防滑硅胶、快速脱卸、吸汗毛巾布",
+    "raw_evidence": [
+      "青岚科技 防风保暖手套 骑行手套 透气网布 M|108.85|离线模拟数据中评分 4.9，销量 7556",
+      "轻舟工坊 夏季薄款手套 骑行手套 弹力莱卡 S|180.86|离线模拟数据中评分 4.9，销量 6844",
+      "云帆制造 夏季薄款手套 骑行手套 弹力莱卡 L|58.23|离线模拟数据中评分 4.8，销量 11200",
+      "原野实验室 半指骑行手套 透气网布 S|252.09|离线模拟数据中评分 4.8，销量 11019",
+      "逐光装备 半指骑行手套 超细纤维掌面 L|220.93|离线模拟数据中评分 4.8，销量 6902"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "cycling-gloves-attribute-material",
+    "category": "骑行手套",
+    "card_type": "attribute",
+    "summary": "材质：弹力莱卡 34% / 超细纤维掌面 34% / 透气网布 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "cycling-gloves-attribute-feature",
+    "category": "骑行手套",
+    "card_type": "attribute",
+    "summary": "功能：触屏指尖 23% / 减震掌垫 20% / 吸汗毛巾布 20% / 防滑硅胶 19% / 快速脱卸 18%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "cycling-gloves-price-budget",
+    "category": "骑行手套",
+    "card_type": "price_range",
+    "summary": "便宜款 39.63-132.47 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-gloves-price-mid",
+    "category": "骑行手套",
+    "card_type": "price_range",
+    "summary": "中档 132.47-194.28 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "cycling-gloves-price-premium",
+    "category": "骑行手套",
+    "card_type": "price_range",
+    "summary": "高端 194.28-263.29 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "mechanical-keyboard-bestseller",
+    "category": "机械键盘",
+    "card_type": "bestseller",
+    "summary": "热销关注点：热插拔、三模连接、RGB背光、全键无冲、消音填充",
+    "raw_evidence": [
+      "凌风实验室 87键机械键盘 PBT键帽 红轴 无线双模|1295.99|离线模拟数据中评分 4.9，销量 10041",
+      "青岚科技 87键机械键盘 铝合金上盖 红轴 无线双模|950.42|离线模拟数据中评分 4.9，销量 9897",
+      "轻舟工坊 紧凑型机械键盘 PBT键帽 静音红轴 三模连接|352.00|离线模拟数据中评分 4.8，销量 8530",
+      "逐光装备 98键机械键盘 ABS机身 茶轴 有线连接|345.57|离线模拟数据中评分 4.8，销量 4747",
+      "原野实验室 紧凑型机械键盘 ABS机身 静音红轴 三模连接|1123.17|离线模拟数据中评分 4.8，销量 3096"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "mechanical-keyboard-attribute-material",
+    "category": "机械键盘",
+    "card_type": "attribute",
+    "summary": "材质：铝合金上盖 34% / PBT键帽 34% / ABS机身 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "mechanical-keyboard-attribute-feature",
+    "category": "机械键盘",
+    "card_type": "attribute",
+    "summary": "功能：消音填充 22% / 三模连接 21% / 热插拔 20% / RGB背光 19% / 全键无冲 18%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "mechanical-keyboard-price-budget",
+    "category": "机械键盘",
+    "card_type": "price_range",
+    "summary": "便宜款 131.18-459.23 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "mechanical-keyboard-price-mid",
+    "category": "机械键盘",
+    "card_type": "price_range",
+    "summary": "中档 459.23-787.22 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "mechanical-keyboard-price-premium",
+    "category": "机械键盘",
+    "card_type": "price_range",
+    "summary": "高端 787.22-1295.99 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "wireless-mouse-bestseller",
+    "category": "无线鼠标",
+    "card_type": "bestseller",
+    "summary": "热销关注点：低延迟、可调DPI、静音按键、长续航、多设备切换",
+    "raw_evidence": [
+      "逐光装备 双模无线鼠标 镁合金外壳 中手型|801.14|离线模拟数据中评分 4.9，销量 11862",
+      "远峰设计 人体工学办公鼠标 无线鼠标 镁合金外壳 中手型|751.53|离线模拟数据中评分 4.9，销量 7837",
+      "轻舟工坊 人体工学办公鼠标 无线鼠标 ABS机身 小手型|174.47|离线模拟数据中评分 4.9，销量 6050",
+      "原野实验室 便携蓝牙鼠标 无线鼠标 磨砂复合材料 中手型|771.28|离线模拟数据中评分 4.9，销量 3199",
+      "凌风实验室 轻量游戏鼠标 无线鼠标 磨砂复合材料 中手型|463.90|离线模拟数据中评分 4.9，销量 1498"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "wireless-mouse-attribute-material",
+    "category": "无线鼠标",
+    "card_type": "attribute",
+    "summary": "材质：ABS机身 34% / 镁合金外壳 34% / 磨砂复合材料 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "wireless-mouse-attribute-feature",
+    "category": "无线鼠标",
+    "card_type": "attribute",
+    "summary": "功能：多设备切换 23% / 长续航 21% / 静音按键 21% / 可调DPI 20% / 低延迟 15%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "wireless-mouse-price-budget",
+    "category": "无线鼠标",
+    "card_type": "price_range",
+    "summary": "便宜款 75.61-285.76 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "wireless-mouse-price-mid",
+    "category": "无线鼠标",
+    "card_type": "price_range",
+    "summary": "中档 285.76-492.95 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "wireless-mouse-price-premium",
+    "category": "无线鼠标",
+    "card_type": "price_range",
+    "summary": "高端 492.95-985.02 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "noise-cancelling-headphones-bestseller",
+    "category": "降噪耳机",
+    "card_type": "bestseller",
+    "summary": "热销关注点：主动降噪、环境声模式、多点连接、空间音频、快充",
+    "raw_evidence": [
+      "逐光装备 录音室监听耳机 降噪耳机 织物耳罩|1363.27|离线模拟数据中评分 4.9，销量 11808",
+      "远峰设计 录音室监听耳机 降噪耳机 铝合金支架|1927.54|离线模拟数据中评分 4.9，销量 10154",
+      "星驰工坊 录音室监听耳机 降噪耳机 蛋白皮耳罩|2390.01|离线模拟数据中评分 4.9，销量 9022",
+      "星驰工坊 便携折叠降噪耳机 蛋白皮耳罩|827.51|离线模拟数据中评分 4.8，销量 6803",
+      "轻舟工坊 录音室监听耳机 降噪耳机 蛋白皮耳罩|1198.13|离线模拟数据中评分 4.8，销量 4492"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "noise-cancelling-headphones-attribute-material",
+    "category": "降噪耳机",
+    "card_type": "attribute",
+    "summary": "材质：蛋白皮耳罩 34% / 织物耳罩 34% / 铝合金支架 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "noise-cancelling-headphones-attribute-feature",
+    "category": "降噪耳机",
+    "card_type": "attribute",
+    "summary": "功能：快充 26% / 多点连接 20% / 主动降噪 19% / 空间音频 18% / 环境声模式 17%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "noise-cancelling-headphones-price-budget",
+    "category": "降噪耳机",
+    "card_type": "price_range",
+    "summary": "便宜款 215.13-826.78 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "noise-cancelling-headphones-price-mid",
+    "category": "降噪耳机",
+    "card_type": "price_range",
+    "summary": "中档 826.78-1423.94 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "noise-cancelling-headphones-price-premium",
+    "category": "降噪耳机",
+    "card_type": "price_range",
+    "summary": "高端 1423.94-2390.01 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "bluetooth-earbuds-bestseller",
+    "category": "蓝牙耳机",
+    "card_type": "bestseller",
+    "summary": "热销关注点：通话降噪、低延迟、入耳检测、防水防汗、无线充电",
+    "raw_evidence": [
+      "原野实验室 半入耳式蓝牙耳机 磨砂ABS|379.03|离线模拟数据中评分 4.9，销量 11538",
+      "原野实验室 入耳式蓝牙耳机 液态硅胶|1413.27|离线模拟数据中评分 4.8，销量 9415",
+      "青岚科技 入耳式蓝牙耳机 亲肤硅胶|993.78|离线模拟数据中评分 4.8，销量 5469",
+      "逐光装备 入耳式蓝牙耳机 磨砂ABS|792.60|离线模拟数据中评分 4.8，销量 3616",
+      "原野实验室 开放式蓝牙耳机 磨砂ABS|853.20|离线模拟数据中评分 4.8，销量 3104"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "bluetooth-earbuds-attribute-material",
+    "category": "蓝牙耳机",
+    "card_type": "attribute",
+    "summary": "材质：亲肤硅胶 34% / 磨砂ABS 34% / 液态硅胶 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "bluetooth-earbuds-attribute-feature",
+    "category": "蓝牙耳机",
+    "card_type": "attribute",
+    "summary": "功能：防水防汗 22% / 无线充电 21% / 低延迟 21% / 通话降噪 19% / 入耳检测 17%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "bluetooth-earbuds-price-budget",
+    "category": "蓝牙耳机",
+    "card_type": "price_range",
+    "summary": "便宜款 155.35-662.86 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "bluetooth-earbuds-price-mid",
+    "category": "蓝牙耳机",
+    "card_type": "price_range",
+    "summary": "中档 662.86-1137.89 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "bluetooth-earbuds-price-premium",
+    "category": "蓝牙耳机",
+    "card_type": "price_range",
+    "summary": "高端 1137.89-1875.70 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "travel-backpack-bestseller",
+    "category": "旅行背包",
+    "card_type": "bestseller",
+    "summary": "热销关注点：干湿分离、电脑隔层、行李箱固定带、防盗口袋、透气背负",
+    "raw_evidence": [
+      "逐光装备 登机旅行背包 耐磨牛津布 42L|367.00|离线模拟数据中评分 4.9，销量 124",
+      "云帆制造 大开口旅行背包 耐磨牛津布 35L|191.92|离线模拟数据中评分 4.8，销量 11838",
+      "凌风实验室 大开口旅行背包 再生聚酯纤维 35L|630.86|离线模拟数据中评分 4.8，销量 11577",
+      "云帆制造 登机旅行背包 耐磨牛津布 28L|716.56|离线模拟数据中评分 4.8，销量 9744",
+      "星驰工坊 轻量徒步背包 旅行背包 再生聚酯纤维 28L|584.81|离线模拟数据中评分 4.8，销量 9566"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "travel-backpack-attribute-material",
+    "category": "旅行背包",
+    "card_type": "attribute",
+    "summary": "材质：防泼水尼龙 34% / 再生聚酯纤维 34% / 耐磨牛津布 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "travel-backpack-attribute-feature",
+    "category": "旅行背包",
+    "card_type": "attribute",
+    "summary": "功能：防盗口袋 23% / 电脑隔层 21% / 行李箱固定带 20% / 透气背负 18% / 干湿分离 18%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "travel-backpack-price-budget",
+    "category": "旅行背包",
+    "card_type": "price_range",
+    "summary": "便宜款 147.69-464.92 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "travel-backpack-price-mid",
+    "category": "旅行背包",
+    "card_type": "price_range",
+    "summary": "中档 464.92-701.61 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "travel-backpack-price-premium",
+    "category": "旅行背包",
+    "card_type": "price_range",
+    "summary": "高端 701.61-1070.25 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "travel-organizer-bestseller",
+    "category": "旅行收纳",
+    "card_type": "bestseller",
+    "summary": "典型组成：衣物袋、鞋袋、内衣袋",
+    "raw_evidence": [
+      "青岚科技 轻量分装袋套装 旅行收纳 防水尼龙 8件套|186.37|离线模拟数据中评分 4.9，销量 10706",
+      "青岚科技 压缩收纳袋套装 旅行收纳 涤纶 5件套|47.89|离线模拟数据中评分 4.9，销量 8296",
+      "星驰工坊 防水旅行收纳包 涤纶 7件套|75.03|离线模拟数据中评分 4.9，销量 7160",
+      "青岚科技 行李箱收纳袋 旅行收纳 涤纶 6件套|183.02|离线模拟数据中评分 4.9，销量 7066",
+      "青岚科技 轻量分装袋套装 旅行收纳 涤纶 8件套|93.89|离线模拟数据中评分 4.9，销量 1740"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "travel-organizer-attribute-material",
+    "category": "旅行收纳",
+    "card_type": "attribute",
+    "summary": "材质：涤纶 34% / 防水尼龙 34% / 牛津布 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "travel-organizer-attribute-feature",
+    "category": "旅行收纳",
+    "card_type": "attribute",
+    "summary": "功能：双向拉链 23% / 可折叠 21% / 网面可视 21% / 可压缩 18% / 防尘防水 16%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "travel-organizer-price-budget",
+    "category": "旅行收纳",
+    "card_type": "price_range",
+    "summary": "便宜款 37.92-75.03 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "travel-organizer-price-mid",
+    "category": "旅行收纳",
+    "card_type": "price_range",
+    "summary": "中档 75.03-125.65 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "travel-organizer-price-premium",
+    "category": "旅行收纳",
+    "card_type": "price_range",
+    "summary": "高端 125.65-245.84 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "thermal-mug-bestseller",
+    "category": "保温杯",
+    "card_type": "bestseller",
+    "summary": "热销关注点：防漏、长效保温、单手开盖、可拆洗、杯底防滑",
+    "raw_evidence": [
+      "原野实验室 便携弹盖保温杯 陶瓷内胆 350ml|195.93|离线模拟数据中评分 4.9，销量 7074",
+      "轻舟工坊 大容量吸管杯 保温杯 316不锈钢 450ml|51.00|离线模拟数据中评分 4.9，销量 5471",
+      "远峰设计 真空保温杯 陶瓷内胆 350ml|399.06|离线模拟数据中评分 4.8，销量 10800",
+      "原野实验室 大容量吸管杯 保温杯 陶瓷内胆 900ml|157.96|离线模拟数据中评分 4.8，销量 10187",
+      "凌风实验室 便携弹盖保温杯 陶瓷内胆 350ml|325.90|离线模拟数据中评分 4.8，销量 9907"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "thermal-mug-attribute-material",
+    "category": "保温杯",
+    "card_type": "attribute",
+    "summary": "材质：304不锈钢 34% / 316不锈钢 34% / 陶瓷内胆 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "thermal-mug-attribute-feature",
+    "category": "保温杯",
+    "card_type": "attribute",
+    "summary": "功能：单手开盖 26% / 可拆洗 22% / 防漏 19% / 杯底防滑 17% / 长效保温 17%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "thermal-mug-price-budget",
+    "category": "保温杯",
+    "card_type": "price_range",
+    "summary": "便宜款 51.00-194.07 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "thermal-mug-price-mid",
+    "category": "保温杯",
+    "card_type": "price_range",
+    "summary": "中档 194.07-325.90 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "thermal-mug-price-premium",
+    "category": "保温杯",
+    "card_type": "price_range",
+    "summary": "高端 325.90-450.26 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "camping-tent-bestseller",
+    "category": "露营帐篷",
+    "card_type": "bestseller",
+    "summary": "热销关注点：防雨、双门通风、快速搭建、雪裙、防蚊纱网",
+    "raw_evidence": [
+      "轻舟工坊 自动速开帐篷 露营帐篷 涂硅尼龙 2人|1205.02|离线模拟数据中评分 4.9，销量 10477",
+      "原野实验室 自动速开帐篷 露营帐篷 防水涤纶 4人|1885.66|离线模拟数据中评分 4.9，销量 6207",
+      "星驰工坊 轻量登山帐篷 露营帐篷 铝合金帐杆 4人|505.83|离线模拟数据中评分 4.9，销量 4336",
+      "云帆制造 自动速开帐篷 露营帐篷 涂硅尼龙 4人|2442.35|离线模拟数据中评分 4.9，销量 2507",
+      "云帆制造 双层徒步帐篷 露营帐篷 铝合金帐杆 1人|2086.36|离线模拟数据中评分 4.8，销量 8996"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "camping-tent-attribute-material",
+    "category": "露营帐篷",
+    "card_type": "attribute",
+    "summary": "材质：涂硅尼龙 34% / 防水涤纶 34% / 铝合金帐杆 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "camping-tent-attribute-feature",
+    "category": "露营帐篷",
+    "card_type": "attribute",
+    "summary": "功能：双门通风 22% / 雪裙 22% / 快速搭建 20% / 防蚊纱网 19% / 防雨 17%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "camping-tent-price-budget",
+    "category": "露营帐篷",
+    "card_type": "price_range",
+    "summary": "便宜款 303.28-1495.16 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "camping-tent-price-mid",
+    "category": "露营帐篷",
+    "card_type": "price_range",
+    "summary": "中档 1495.16-2138.99 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "camping-tent-price-premium",
+    "category": "露营帐篷",
+    "card_type": "price_range",
+    "summary": "高端 2138.99-2849.60 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "sleeping-bag-bestseller",
+    "category": "睡袋",
+    "card_type": "bestseller",
+    "summary": "热销关注点：保暖、可压缩、双向拉链、防潮、可拼接",
+    "raw_evidence": [
+      "轻舟工坊 三季棉睡袋 鸭绒填充|1435.35|离线模拟数据中评分 4.9，销量 10658",
+      "云帆制造 三季棉睡袋 鸭绒填充|1122.88|离线模拟数据中评分 4.8，销量 7372",
+      "原野实验室 三季棉睡袋 化纤棉填充 加宽|263.22|离线模拟数据中评分 4.8，销量 6079",
+      "远峰设计 信封式睡袋 化纤棉填充|555.95|离线模拟数据中评分 4.8，销量 4207",
+      "逐光装备 木乃伊式睡袋 鸭绒填充 加宽|811.43|离线模拟数据中评分 4.8，销量 3083"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "sleeping-bag-attribute-material",
+    "category": "睡袋",
+    "card_type": "attribute",
+    "summary": "材质：鸭绒填充 34% / 化纤棉填充 34% / 防泼水尼龙 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "sleeping-bag-attribute-feature",
+    "category": "睡袋",
+    "card_type": "attribute",
+    "summary": "功能：防潮 21% / 保暖 21% / 可拼接 21% / 可压缩 20% / 双向拉链 18%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "sleeping-bag-price-budget",
+    "category": "睡袋",
+    "card_type": "price_range",
+    "summary": "便宜款 167.97-572.53 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "sleeping-bag-price-mid",
+    "category": "睡袋",
+    "card_type": "price_range",
+    "summary": "中档 572.53-1125.18 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "sleeping-bag-price-premium",
+    "category": "睡袋",
+    "card_type": "price_range",
+    "summary": "高端 1125.18-1747.04 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "running-shoes-bestseller",
+    "category": "跑步鞋",
+    "card_type": "bestseller",
+    "summary": "热销关注点：缓震、回弹、透气、防滑、足弓支撑",
+    "raw_evidence": [
+      "凌风实验室 稳定支撑跑鞋 跑步鞋 耐磨橡胶 40|956.90|离线模拟数据中评分 4.9，销量 8668",
+      "星驰工坊 竞速训练鞋 跑步鞋 超临界泡棉 40|1148.08|离线模拟数据中评分 4.9，销量 7765",
+      "青岚科技 轻量慢跑鞋 跑步鞋 超临界泡棉 40|696.03|离线模拟数据中评分 4.9，销量 5603",
+      "青岚科技 稳定支撑跑鞋 跑步鞋 超临界泡棉 42|1244.57|离线模拟数据中评分 4.9，销量 3273",
+      "逐光装备 稳定支撑跑鞋 跑步鞋 耐磨橡胶 36|711.75|离线模拟数据中评分 4.8，销量 7052"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "running-shoes-attribute-material",
+    "category": "跑步鞋",
+    "card_type": "attribute",
+    "summary": "材质：工程网布 34% / 超临界泡棉 34% / 耐磨橡胶 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "running-shoes-attribute-feature",
+    "category": "跑步鞋",
+    "card_type": "attribute",
+    "summary": "功能：缓震 25% / 透气 21% / 回弹 20% / 足弓支撑 17% / 防滑 17%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "running-shoes-price-budget",
+    "category": "跑步鞋",
+    "card_type": "price_range",
+    "summary": "便宜款 177.35-650.01 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "running-shoes-price-mid",
+    "category": "跑步鞋",
+    "card_type": "price_range",
+    "summary": "中档 650.01-1008.65 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "running-shoes-price-premium",
+    "category": "跑步鞋",
+    "card_type": "price_range",
+    "summary": "高端 1008.65-1554.97 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "hiking-shoes-bestseller",
+    "category": "徒步鞋",
+    "card_type": "bestseller",
+    "summary": "热销关注点：防水、防滑大底、脚踝支撑、鞋头防撞、透气",
+    "raw_evidence": [
+      "凌风实验室 轻量越野鞋 徒步鞋 头层牛皮 38|1111.89|离线模拟数据中评分 4.9，销量 11453",
+      "凌风实验室 中帮登山鞋 徒步鞋 防水膜 36|498.22|离线模拟数据中评分 4.9，销量 10971",
+      "云帆制造 低帮徒步鞋 耐磨织物 38|703.42|离线模拟数据中评分 4.9，销量 8927",
+      "轻舟工坊 轻量越野鞋 徒步鞋 防水膜 44|721.18|离线模拟数据中评分 4.9，销量 3649",
+      "青岚科技 低帮徒步鞋 防水膜 36|366.54|离线模拟数据中评分 4.9，销量 1838"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "hiking-shoes-attribute-material",
+    "category": "徒步鞋",
+    "card_type": "attribute",
+    "summary": "材质：防水膜 34% / 头层牛皮 34% / 耐磨织物 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "hiking-shoes-attribute-feature",
+    "category": "徒步鞋",
+    "card_type": "attribute",
+    "summary": "功能：透气 24% / 鞋头防撞 22% / 防滑大底 20% / 脚踝支撑 17% / 防水 17%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "hiking-shoes-price-budget",
+    "category": "徒步鞋",
+    "card_type": "price_range",
+    "summary": "便宜款 299.12-634.11 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "hiking-shoes-price-mid",
+    "category": "徒步鞋",
+    "card_type": "price_range",
+    "summary": "中档 634.11-896.57 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "hiking-shoes-price-premium",
+    "category": "徒步鞋",
+    "card_type": "price_range",
+    "summary": "高端 896.57-1778.34 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "yoga-mat-bestseller",
+    "category": "瑜伽垫",
+    "card_type": "bestseller",
+    "summary": "热销关注点：双面防滑、回弹缓冲、无异味、辅助体位线、易清洁",
+    "raw_evidence": [
+      "青岚科技 加厚健身垫 瑜伽垫 天然橡胶 10mm|191.06|离线模拟数据中评分 4.9，销量 9998",
+      "逐光装备 天然橡胶瑜伽垫 TPE 10mm|186.61|离线模拟数据中评分 4.8，销量 10443",
+      "凌风实验室 便携折叠瑜伽垫 软木+橡胶 8mm|60.81|离线模拟数据中评分 4.8，销量 10320",
+      "凌风实验室 防滑瑜伽垫 软木+橡胶 4mm|593.14|离线模拟数据中评分 4.8，销量 9565",
+      "云帆制造 防滑瑜伽垫 软木+橡胶 4mm|489.10|离线模拟数据中评分 4.8，销量 6829"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "yoga-mat-attribute-material",
+    "category": "瑜伽垫",
+    "card_type": "attribute",
+    "summary": "材质：天然橡胶 34% / TPE 34% / 软木+橡胶 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "yoga-mat-attribute-feature",
+    "category": "瑜伽垫",
+    "card_type": "attribute",
+    "summary": "功能：双面防滑 24% / 易清洁 21% / 回弹缓冲 20% / 无异味 20% / 辅助体位线 15%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "yoga-mat-price-budget",
+    "category": "瑜伽垫",
+    "card_type": "price_range",
+    "summary": "便宜款 60.81-213.25 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "yoga-mat-price-mid",
+    "category": "瑜伽垫",
+    "card_type": "price_range",
+    "summary": "中档 213.25-436.42 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "yoga-mat-price-premium",
+    "category": "瑜伽垫",
+    "card_type": "price_range",
+    "summary": "高端 436.42-718.22 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "power-bank-bestseller",
+    "category": "充电宝",
+    "card_type": "bestseller",
+    "summary": "热销关注点：USB-C快充、电量显示、多设备充电、过温保护、可登机容量",
+    "raw_evidence": [
+      "青岚科技 快充移动电源 充电宝 磨砂ABS 10000mAh|354.05|离线模拟数据中评分 4.9，销量 11275",
+      "逐光装备 大容量户外电源 充电宝 磨砂ABS 20000mAh|378.89|离线模拟数据中评分 4.9，销量 10126",
+      "原野实验室 磁吸无线充电宝 铝合金 5000mAh|105.04|离线模拟数据中评分 4.9，销量 7768",
+      "青岚科技 大容量户外电源 充电宝 铝合金 10000mAh|372.71|离线模拟数据中评分 4.9，销量 5818",
+      "青岚科技 磁吸无线充电宝 铝合金 10000mAh|657.54|离线模拟数据中评分 4.8，销量 11766"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "power-bank-attribute-material",
+    "category": "充电宝",
+    "card_type": "attribute",
+    "summary": "材质：阻燃PC 34% / 铝合金 34% / 磨砂ABS 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "power-bank-attribute-feature",
+    "category": "充电宝",
+    "card_type": "attribute",
+    "summary": "功能：多设备充电 23% / USB-C快充 21% / 电量显示 19% / 过温保护 19% / 可登机容量 18%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "power-bank-price-budget",
+    "category": "充电宝",
+    "card_type": "price_range",
+    "summary": "便宜款 71.44-220.07 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "power-bank-price-mid",
+    "category": "充电宝",
+    "card_type": "price_range",
+    "summary": "中档 220.07-430.44 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "power-bank-price-premium",
+    "category": "充电宝",
+    "card_type": "price_range",
+    "summary": "高端 430.44-664.80 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "laptop-stand-bestseller",
+    "category": "笔记本支架",
+    "card_type": "bestseller",
+    "summary": "热销关注点：多档调节、稳固承重、开放散热、防滑硅胶、可折叠",
+    "raw_evidence": [
+      "青岚科技 折叠笔记本支架 铝合金 11-13英寸|177.27|离线模拟数据中评分 4.9，销量 9145",
+      "云帆制造 桌面散热支架 笔记本支架 铝合金 11-13英寸|372.71|离线模拟数据中评分 4.9，销量 2983",
+      "轻舟工坊 桌面散热支架 笔记本支架 玻纤增强尼龙 通用|378.82|离线模拟数据中评分 4.9，销量 2886",
+      "原野实验室 升降旋转支架 笔记本支架 玻纤增强尼龙 11-13英寸|371.42|离线模拟数据中评分 4.8，销量 6233",
+      "星驰工坊 便携电脑支架 笔记本支架 玻纤增强尼龙 通用|148.77|离线模拟数据中评分 4.8，销量 3552"
+    ],
+    "last_updated": "2026-08-08",
+    "confidence": 0.86
+  },
+  {
+    "card_id": "laptop-stand-attribute-material",
+    "category": "笔记本支架",
+    "card_type": "attribute",
+    "summary": "材质：铝合金 34% / 碳钢 34% / 玻纤增强尼龙 32%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "laptop-stand-attribute-feature",
+    "category": "笔记本支架",
+    "card_type": "attribute",
+    "summary": "功能：多档调节 24% / 防滑硅胶 23% / 开放散热 21% / 稳固承重 18% / 可折叠 14%",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.9
+  },
+  {
+    "card_id": "laptop-stand-price-budget",
+    "category": "笔记本支架",
+    "card_type": "price_range",
+    "summary": "便宜款 49.61-286.77 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "laptop-stand-price-mid",
+    "category": "笔记本支架",
+    "card_type": "price_range",
+    "summary": "中档 286.77-378.60 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  },
+  {
+    "card_id": "laptop-stand-price-premium",
+    "category": "笔记本支架",
+    "card_type": "price_range",
+    "summary": "高端 378.60-573.75 元；基于四个平台离线模拟标价换算，不含运费关税",
+    "raw_evidence": [],
+    "last_updated": "2026-08-08",
+    "confidence": 0.88
+  }
+]

@@ -1,18 +1,22 @@
 from __future__ import annotations
 
 import json
+from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
 import numpy as np
 
-from app.recall.local_embeddings import embed_item
+from app.recall.embedding_backend import (
+    get_embedding_backend,
+)
+from app.recall.offline_catalog import (
+    DEFAULT_OFFLINE_CATALOG_PATH,
+)
 from app.utils.path_utils import PROJECT_ROOT
 
 
-DEFAULT_CATALOG_PATH = (
-    PROJECT_ROOT / "data" / "demo_items.json"
-)
+DEFAULT_CATALOG_PATH = DEFAULT_OFFLINE_CATALOG_PATH
 DEFAULT_INDEX_PATH = (
     PROJECT_ROOT / "data" / "item_index.faiss"
 )
@@ -21,6 +25,8 @@ DEFAULT_INDEX_PATH = (
 def build_demo_index(
     catalog_path: Path = DEFAULT_CATALOG_PATH,
     index_path: Path = DEFAULT_INDEX_PATH,
+    *,
+    backend_name: str | None = None,
 ) -> tuple[Path, Path, int]:
     import faiss
 
@@ -28,10 +34,11 @@ def build_demo_index(
         catalog_path.read_text(encoding="utf-8")
     )
     if not isinstance(raw_items, list) or not raw_items:
-        raise ValueError("演示商品目录必须是非空数组。")
+        raise ValueError(
+            "离线演示商品目录必须是非空数组。"
+    )
 
     items: list[dict[str, Any]] = []
-    embeddings: list[list[float]] = []
     required_fields = {
         "item_id",
         "platform",
@@ -42,16 +49,24 @@ def build_demo_index(
 
     for raw_item in raw_items:
         if not isinstance(raw_item, dict):
-            raise ValueError("演示商品必须是 JSON 对象。")
+            raise ValueError(
+                "离线演示商品必须是 JSON 对象。"
+            )
         missing = required_fields - raw_item.keys()
         if missing:
             raise ValueError(
-                "演示商品缺少字段："
+                "离线演示商品缺少字段："
                 + ", ".join(sorted(missing))
             )
         item = dict(raw_item)
-        embeddings.append(embed_item(item))
         items.append(item)
+
+    backend = get_embedding_backend(backend_name)
+    embeddings = backend.encode_items(items)
+    if len(embeddings) != len(items):
+        raise RuntimeError(
+            "Embedding 后端返回的向量数量与商品数量不一致。"
+        )
 
     matrix = np.asarray(
         embeddings,
@@ -74,6 +89,26 @@ def build_demo_index(
             {
                 str(index): item
                 for index, item in enumerate(items)
+            },
+            ensure_ascii=False,
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+
+    manifest_path = index_path.with_suffix(
+        ".manifest.json"
+    )
+    manifest_path.write_text(
+        json.dumps(
+            {
+                "format_version": 1,
+                "item_count": len(items),
+                "catalog_path": str(catalog_path),
+                "catalog_sha256": sha256(
+                    catalog_path.read_bytes()
+                ).hexdigest(),
+                "embedding": backend.spec.as_dict(),
             },
             ensure_ascii=False,
             indent=2,

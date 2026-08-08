@@ -18,6 +18,12 @@ async def test_price_compare_to_shipping_pipeline() -> None:
             title="Amazon 收纳袋",
             price=30.0,
             currency="USD",
+            rating=4.8,
+            sales=1000,
+            attributes={
+                "material": "速干面料",
+                "features": ["吸湿排汗", "反光条"],
+            },
         ),
         Candidate(
             item_id="ali-1",
@@ -50,3 +56,10 @@ async def test_price_compare_to_shipping_pipeline() -> None:
         "amazon-1",
         "ali-1",
     }
+    amazon = next(
+        item for item in landed.items if item.item_id == "amazon-1"
+    )
+    assert amazon.title == "Amazon 收纳袋"
+    assert amazon.rating == 4.8
+    assert amazon.sales == 1000
+    assert amazon.attributes["material"] == "速干面料"

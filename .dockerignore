@@ -8,4 +8,5 @@ frontend/dist
 output/*
 uploaded/*
 data/*
-!data/demo_items.json
+!data/offline_catalog.json
+!data/offline_catalog.manifest.json

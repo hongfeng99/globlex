@@ -47,3 +47,23 @@ async def test_item_picker_limits_to_three():
         }
     )
     assert len(result.picks) == 3
+
+
+async def test_item_picker_accepts_json_encoded_arguments():
+    plastic = _item("A-PLASTIC", 80)
+    accepted = _item("B", 100)
+    result = await item_picker.ainvoke(
+        {
+            "items": (
+                "["
+                + plastic.model_dump_json()
+                + ","
+                + accepted.model_dump_json()
+                + "]"
+            ),
+            "preferences": '["不要塑料"]',
+        }
+    )
+
+    assert [item.item_id for item in result.picks] == ["B"]
+    assert result.rejected_brief

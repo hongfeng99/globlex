@@ -6,7 +6,7 @@ from langchain_core.tools import tool
 from app.agent.llm import get_llm
 
 
-@tool
+@tool(return_direct=True)
 async def chat_fallback(message: str) -> str:
     """非购物问题的闲聊兜底；调用后直接把回答交给用户。"""
 

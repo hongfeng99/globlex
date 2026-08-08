@@ -72,7 +72,30 @@ services:
       timeout: 5s
       retries: 10
 
+  category-kb-init:
+    image: globex-agent:local
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: ${BUILD_TARGET:-prod}
+    command: ["python", "scripts/init_category_kb.py", "--recreate"]
+    environment:
+      <<: *common-env
+      TOWER_BACKEND: sentence_transformers
+      TOWER_MODEL_NAME: intfloat/multilingual-e5-small
+      TOWER_DEVICE: cpu
+      TOWER_LOCAL_FILES_ONLY: "true"
+      OPENSEARCH_HOST: opensearch
+      OPENSEARCH_PORT: "9200"
+      OPENSEARCH_USER: admin
+      OPENSEARCH_PASS: admin
+      CATEGORY_KB_ANALYZER: standard
+    depends_on:
+      opensearch: {condition: service_healthy}
+    restart: "no"
+
   agent:
+    image: globex-agent:local
     build:
       context: ..
       dockerfile: docker/Dockerfile
@@ -83,14 +106,25 @@ services:
       OPENAI_API_KEY: ${OPENAI_API_KEY:-local-vllm}
       LLM_MAIN: globex-main
       LLM_JUDGE: globex-main
+      LLM_CLIENT_MAX_RETRIES: "2"
+      LLM_MIDDLEWARE_MAX_ATTEMPTS: "3"
+      LLM_RETRY_BACKOFF_SEC: "2"
+      LLM_MAX_CONCURRENCY: "2"
       ANN_INDEX_PATH: /app/data/item_index.faiss
-      TOWER_BACKEND: local
+      TOWER_BACKEND: sentence_transformers
+      TOWER_MODEL_NAME: intfloat/multilingual-e5-small
+      TOWER_DEVICE: cpu
+      TOWER_LOCAL_FILES_ONLY: "true"
+      TOWER_QUERY_WEIGHT: "0.75"
+      TOWER_USER_WEIGHT: "0.25"
       OPENSEARCH_HOST: opensearch
-      CATEGORY_KB_REQUIRED: "false"
+      CATEGORY_KB_ANALYZER: standard
+      CATEGORY_KB_REQUIRED: "true"
       RERANKER_ENDPOINT: http://reranker:8000/rerank
     ports: ["8000:8000"]
     depends_on:
       opensearch: {condition: service_healthy}
+      category-kb-init: {condition: service_completed_successfully}
       redis: {condition: service_healthy}
       vllm: {condition: service_healthy}
       reranker: {condition: service_healthy}

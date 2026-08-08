@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 import time
+from typing import Any
 
 from langchain_core.tools import tool
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.api.monitor import monitor
 from app.recall.duty import (
@@ -29,6 +30,12 @@ class LandedCost(BaseModel):
     landed_cny: float
     eta_days: int
     duty_tier: DutyTier
+    title: str = ""
+    rating: float | None = None
+    sales: int | None = None
+    attributes: dict[str, Any] = Field(
+        default_factory=dict
+    )
 
 
 class ShippingCalcOutput(BaseModel):
@@ -46,11 +53,15 @@ def _guess_weight_kg(
     """
     从 PricePoint 估计商品重量。
 
-    第 13 章将通过品类洞察提供真实品类重量；当前章节
-    使用 0.5 kg 占位值。
+    优先使用离线商品结构化重量；旧数据缺失时使用
+    0.5 kg 兼容值。
     """
 
-    return 0.5
+    return (
+        point.weight_kg
+        if point.weight_kg is not None
+        else 0.5
+    )
 
 
 @tool
@@ -125,6 +136,10 @@ async def shipping_calc(
                 landed_cny=total,
                 eta_days=eta,
                 duty_tier=duty_tier,
+                title=point.title,
+                rating=point.rating,
+                sales=point.sales,
+                attributes=dict(point.attributes),
             )
         )
 

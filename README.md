@@ -187,6 +187,7 @@ globex-agent/
 │
 ├── scripts/                               # 数据生产、评测、初始化和预热脚本
 │   ├── setup_pipeline.sh                  # 创建 OpenSearch Hybrid Search Pipeline
+│   ├── generate_offline_catalog.py         # 确定性生成离线模拟商品目录与清单
 │   ├── build_demo_index.py                # 生成开箱即用的演示商品 Faiss 索引
 │   ├── warmup_vllm.py                     # 用代表性请求预热 vLLM KV Cache
 │   ├── etl/
@@ -224,10 +225,14 @@ globex-agent/
 │   ├── test_shipping_calc.py               # 运费、关税、到手价和时效测试
 │   ├── test_price_shipping_pipeline.py    # 比价到运费关税估算的组合链路测试
 │   ├── test_item_picker.py                # 硬约束过滤、打分和最多三件限制测试
+│   ├── test_offline_catalog.py             # 离线目录契约、确定性和骑行召回测试
 │   └── test_chapters_16_19.py             # 预算、熔断、Harness、安全、策略和完整 Prompt 测试
 │
-├── data/                                  # 索引、Trace、Prompt 版本等持久化数据目录
-│   └── .gitkeep                           # 保留空数据目录；实际数据被 Git 忽略
+├── data/                                  # 离线目录、索引、Trace 等持久化数据
+│   ├── offline_catalog.json               # 18 品类、四个模拟平台的离线商品库
+│   ├── offline_catalog.manifest.json      # 数据版本、生成参数和数量清单
+│   ├── demo_items.json                    # 早期 12 条最小兼容样例
+│   └── .gitkeep                           # 保留数据目录
 ├── output/                                # 按 thread_id 保存报告和任务输出
 │   ├── .gitkeep                           # 保留空输出目录
 │   └── thread-demo/                       # 示例运行产生的会话输出目录
@@ -249,10 +254,10 @@ globex-agent/
 用户请求
   → FastAPI 创建任务并绑定 thread_id/session_dir
   → 主 AgentLoop 注入长期偏好、历史策略和 Token 预算
-  → Planner / 单工具 / dispatch_tool 子 AgentLoop
-  → CategoryInsight + ItemSearch 获取候选
-  → PriceCompare + ShippingCalc 计算真实到手成本
-  → ItemPicker 按约束与偏好精挑
+  → Planner 拆解结构化购物需求
+  → CategoryInsight 补全品类知识（无效时回退 WebSearch）
+  → ItemSearch / dispatch_tool 检索单平台或并发四平台候选
+  → PriceCompare、ShippingCalc、ItemPicker 按约束与偏好精挑
   → ShoppingSummary 生成最终清单
   → Monitor 通过 WebSocket 推送过程和结果
 ```
@@ -263,7 +268,7 @@ globex-agent/
 
 ```powershell
 conda activate globlex-env
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,embeddings]"
 ```
 
 也可以使用 `uv sync --all-extras` 创建项目自己的 `.venv`。
@@ -280,23 +285,97 @@ Copy-Item .env.example .env
 OPENAI_BASE_URL=https://your-openai-compatible-endpoint/v1
 OPENAI_API_KEY=your-key
 LLM_MAIN=your-model
+LLM_ENABLE_THINKING=false
+LLM_CLIENT_MAX_RETRIES=2
+LLM_MIDDLEWARE_MAX_ATTEMPTS=3
+LLM_MAX_CONCURRENCY=2
 ```
 
-`.env.example` 默认启用本地向量编码，并会在首次检索时从
-`data/demo_items.json` 自动生成演示索引。也可以提前生成：
+使用 ModelScope 或阿里云百炼的 Qwen 时，阶段状态机会使用
+`required`/指定工具的 `tool_choice` 保证流程推进，因此必须设置
+`LLM_ENABLE_THINKING=false`；这两个兼容端点会自动把配置作为
+`extra_body.enable_thinking` 发送。其他兼容服务不会注入该参数。
+
+主 Agent 每轮只会看到当前阶段的工具 schema，并在工具执行前再次校验
+权限和前置依赖：PLANNING 可用 Planner/ChatFallback/CategoryInsight/
+WebSearch；SEARCHING 可用 ItemSearch/DispatchTool/WebSearch/
+CategoryInsight/ChatFallback；COMPARING 可用 PriceCompare/ShippingCalc/
+ItemPicker/ChatFallback；CONCLUDING 只可用 ShoppingSummary/ChatFallback。
+四平台子 Agent 固定在 SEARCHING，因此可以最多三轮改写召回，但不能越权
+比价、总结或再次派发。
+
+对限流较严格的 OpenAI 兼容服务，Agent 会限制同时进行的模型调用数，
+并对 HTTP 429、超时及 `choices=null` 异常响应做指数退避重试。这里限制的
+只是大模型请求；四个平台的 LLM 子 AgentLoop 仍会并发创建和推进。
+重试耗尽后会返回明确的模型服务错误，便于等待配额恢复或切换兼容模型
+服务，不会静默退化为不调用 LLM 的硬编码商品 worker。
+
+`.env.example` 默认使用 `intfloat/multilingual-e5-small` 统一编码
+Query、Item 和用户自然语言偏好，因此本地演示无需训练独立 Query 塔。
+查询与偏好加权后会重新归一化，仍与商品索引保持相同维度；可通过
+`TOWER_QUERY_WEIGHT` 和 `TOWER_USER_WEIGHT` 调整权重。低配或完全
+离线环境可临时设置 `TOWER_BACKEND=hash`，但必须用相同后端重建索引。
+模型首次下载完成后可设置 `TOWER_LOCAL_FILES_ONLY=true`，避免启动时访问
+Hugging Face；当前本机 `.env` 已启用该选项。
+
+当配置的索引文件不存在且
+`ANN_AUTO_BUILD_DEMO=true` 时，首次检索会从
+`data/offline_catalog.json` 自动生成演示索引。仓库默认目录由固定
+随机种子生成，包含 18 个品类、四个模拟平台共 1,008 件商品。
+目录 schema v2 为机械键盘提供 `switch_type`、`connection_modes`、
+`layout`、`use_cases` 和 `noise_level` 等结构化属性。ItemSearch 会从
+原始用户请求中提取品类、预估到手价上限、轴体、连接方式和配列，
+扩大向量召回池后执行硬过滤；没有精确匹配时不会自动提高预算或替换属性。
+包含多个平台的一次 `dispatch_tool` 调用会被确定性拆成每个平台一个
+并行 LLM 子 AgentLoop，且每轮最多四个平台、同一平台不重复派发。每个
+子 Agent 都能检查 ItemSearch 观察结果，并在候选为空、品类偏移或硬约束
+命中不足时改写查询、调整 `top_k` 后继续召回（最多三轮）。子 Agent 不含
+`dispatch_tool`，因此不会递归派生，但仍保留 LLM 规划和商品检索能力。
+用户没有指定平台时默认比较全部四个平台；只有明确指定一个平台时才直接
+调用单路 ItemSearch。
+已有旧索引时必须重新构建。重新生成目录或构建索引时运行：
 
 ```powershell
+python -m scripts.generate_offline_catalog
 python scripts/build_demo_index.py
 ```
 
-演示目录只用于验证完整链路，不代表平台实时价格。接入真实
-商品源后，应关闭 `ANN_AUTO_BUILD_DEMO` 并生成生产索引。
+CategoryInsight 使用独立的 OpenSearch 离线品类知识库。首次初始化：
+
+```powershell
+python scripts/generate_offline_category_kb.py
+docker compose -f docker/docker-compose.yml up -d opensearch
+python scripts/init_category_kb.py --recreate
+```
+
+Windows 本机没有 Docker 时，可使用项目脚本安装并启动官方 2.15.0
+Windows 发行包。运行时安装在无空格路径 `D:\globex-runtime`，只监听
+`127.0.0.1:9200`，不会注册系统服务：
+
+```powershell
+.\scripts\install_opensearch_windows.ps1
+.\scripts\start_opensearch_windows.ps1
+python scripts/init_category_kb.py --recreate
+```
+
+初始化成功后可将 `CATEGORY_KB_REQUIRED=true`，使索引缺失或模型维度
+不一致时明确报错。品类卡来自离线模拟商品的聚合统计，同样不代表真实
+平台榜单或市场价格。默认使用内置 `standard` analyzer；若自行安装中文
+IK 插件，可将 `CATEGORY_KB_ANALYZER` 改为对应 analyzer 并重建索引。
+
+离线目录中的平台、商品、价格、库存和销量均为模拟数据，只用于
+验证完整链路，不代表平台实时信息。接入真实商品源后，应关闭
+`ANN_AUTO_BUILD_DEMO` 并生成生产索引。
 
 启动 FastAPI：
 
 ```powershell
 python -m uvicorn app.api.server:app --reload --port 8000
 ```
+
+前端检测到上一轮是在追问预算、场景或商品属性时，会把下一次输入标记为
+“用户补充信息”并与原购物需求合并后提交；用户也可以点击“改为新需求”
+清除该上下文。
 
 ### 2. 启动前端
 

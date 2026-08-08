@@ -26,6 +26,10 @@ frontend/dist/
 data/*
 !data/.gitkeep
 !data/demo_items.json
+!data/offline_catalog.json
+!data/offline_catalog.manifest.json
+!data/offline_category_cards.json
+!data/offline_category_cards.manifest.json
 
 output/*
 !output/.gitkeep

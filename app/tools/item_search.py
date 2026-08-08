@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import math
 import time
 from typing import Any, Literal
 
@@ -8,7 +9,19 @@ from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
 from app.api.monitor import monitor
+from app.agent.request_context import (
+    get_original_request,
+    record_search_candidates,
+)
+from app.config import env_float
+from app.memory.context import get_current_user_id
+from app.memory.store import preference_store
 from app.recall.ann import ann_client
+from app.recall.search_constraints import (
+    candidate_rejection_reasons,
+    estimate_landed_cny,
+    parse_search_constraints,
+)
 from app.recall.towers import tower_client
 
 
@@ -36,6 +49,7 @@ class Candidate(BaseModel):
     attributes: dict[str, Any] = Field(
         default_factory=dict
     )
+    estimated_landed_cny: float | None = None
 
 
 class ItemSearchOutput(BaseModel):
@@ -47,6 +61,12 @@ class ItemSearchOutput(BaseModel):
     candidates: list[Candidate]
     total_recall: int
     truncated: bool
+    matched_total: int | None = None
+    rejected_count: int = 0
+    applied_constraints: list[str] = Field(
+        default_factory=list
+    )
+    no_match_reason: str | None = None
 
 
 async def _semantic_recall(
@@ -70,36 +90,72 @@ async def _personalized_recall(
     platform: str,
     top_k: int,
     user_id: str,
+    preferences: list[str],
 ) -> list[dict[str, Any]]:
     user_embedding, query_embedding = (
         await asyncio.gather(
-            tower_client.encode_user(user_id),
+            tower_client.encode_user(
+                user_id,
+                preferences,
+            ),
             tower_client.encode_query(query),
         )
     )
 
-    if len(user_embedding) != len(
-        query_embedding
-    ):
-        raise ValueError(
-            "User 塔与 Query 塔向量维度不一致。"
-        )
-
-    # 当前章节使用固定权重；后续可替换成训练得到的融合层。
-    fused_embedding = [
-        0.6 * user_value
-        + 0.4 * query_value
-        for user_value, query_value in zip(
-            user_embedding,
-            query_embedding,
-        )
-    ]
+    fused_embedding = _fuse_embeddings(
+        query_embedding,
+        user_embedding,
+    )
 
     return ann_client.search(
         fused_embedding,
         top_k,
         platform,
     )
+
+
+def _fuse_embeddings(
+    query_embedding: list[float],
+    user_embedding: list[float],
+    *,
+    query_weight: float | None = None,
+    user_weight: float | None = None,
+) -> list[float]:
+    """Weighted fusion that keeps the item-index dimension unchanged."""
+
+    if len(user_embedding) != len(query_embedding):
+        raise ValueError(
+            "User 塔与 Query 塔向量维度不一致。"
+        )
+    effective_query_weight = (
+        query_weight
+        if query_weight is not None
+        else env_float(
+            "TOWER_QUERY_WEIGHT", 0.75, minimum=0
+        )
+    )
+    effective_user_weight = (
+        user_weight
+        if user_weight is not None
+        else env_float(
+            "TOWER_USER_WEIGHT", 0.25, minimum=0
+        )
+    )
+    if effective_query_weight + effective_user_weight <= 0:
+        raise ValueError("Query 与 User 融合权重不能同时为 0。")
+
+    fused = [
+        effective_query_weight * query_value
+        + effective_user_weight * user_value
+        for query_value, user_value in zip(
+            query_embedding,
+            user_embedding,
+        )
+    ]
+    norm = math.sqrt(sum(value * value for value in fused))
+    if norm <= 0 or not math.isfinite(norm):
+        raise ValueError("融合后的向量无法归一化。")
+    return [value / norm for value in fused]
 
 
 def _dedupe_and_rerank(
@@ -171,6 +227,16 @@ async def _recall(
         )
     )
 
+    preferences: list[str] = []
+    if user_id:
+        entries = await preference_store.read_relevant(
+            user_id,
+            query,
+        )
+        preferences = [
+            entry.preference for entry in entries
+        ]
+
     personalized_task = (
         asyncio.create_task(
             _personalized_recall(
@@ -178,9 +244,10 @@ async def _recall(
                 platform,
                 recall_k,
                 user_id,
+                preferences,
             )
         )
-        if user_id
+        if user_id and preferences
         else None
     )
 
@@ -263,10 +330,19 @@ async def item_search(
         )
 
     top_k = min(top_k, 50)
+    constraints = parse_search_constraints(
+        get_original_request(),
+        normalized_query,
+    )
+    context_user_id = get_current_user_id()
     normalized_user_id = (
-        user_id.strip()
-        if user_id is not None
-        else None
+        context_user_id
+        if context_user_id is not None
+        else (
+            user_id.strip()
+            if user_id is not None
+            else None
+        )
     )
     normalized_user_id = (
         normalized_user_id or None
@@ -283,15 +359,31 @@ async def item_search(
 
     started_at = time.perf_counter()
 
+    # Hard constraints need a wider semantic pool. Otherwise a top_k=5
+    # request could filter five near-matches and miss a valid sixth item.
+    recall_limit = 50 if constraints.active else top_k
     raw_candidates, total_recall = (
         await _recall(
             normalized_query,
             platform,
-            top_k,
+            recall_limit,
             normalized_user_id,
         )
     )
 
+    recalled_count = len(raw_candidates)
+    filtered_candidates: list[dict[str, Any]] = []
+    for raw in raw_candidates:
+        if candidate_rejection_reasons(raw, constraints):
+            continue
+        candidate = dict(raw)
+        candidate["estimated_landed_cny"] = (
+            estimate_landed_cny(raw)
+        )
+        filtered_candidates.append(candidate)
+
+    matched_total = len(filtered_candidates)
+    raw_candidates = filtered_candidates[:top_k]
     candidates = [
         Candidate(
             item_id=str(raw["item_id"]),
@@ -305,6 +397,9 @@ async def item_search(
             attributes=raw.get(
                 "attributes",
                 {},
+            ),
+            estimated_landed_cny=raw.get(
+                "estimated_landed_cny"
             ),
         )
         for raw in raw_candidates
@@ -323,19 +418,39 @@ async def item_search(
         duration_ms,
     )
 
-    return ItemSearchOutput(
+    result = ItemSearchOutput(
         platform=platform,
         candidates=candidates,
         total_recall=total_recall,
         truncated=(
-            total_recall > len(candidates)
+            total_recall > recalled_count
+            or matched_total > len(candidates)
+        ),
+        matched_total=matched_total,
+        rejected_count=recalled_count - matched_total,
+        applied_constraints=constraints.labels(),
+        no_match_reason=(
+            None
+            if candidates
+            else (
+                (
+                    "未找到同时满足以下硬条件的离线模拟商品："
+                    + "、".join(constraints.labels())
+                    if constraints.labels()
+                    else "当前离线模拟库未找到候选商品"
+                )
+                + "。系统没有自动放宽条件。"
+            )
         ),
     )
+    record_search_candidates(result.candidates)
+    return result
 
 
 __all__ = [
     "Candidate",
     "ItemSearchOutput",
     "Platform",
+    "_fuse_embeddings",
     "item_search",
 ]

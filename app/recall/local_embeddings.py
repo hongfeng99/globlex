@@ -56,26 +56,36 @@ def embed_text(text: str) -> list[float]:
     return [value / norm for value in vector]
 
 
-def embed_item(item: Mapping[str, Any]) -> list[float]:
+def render_item_text(item: Mapping[str, Any]) -> str:
+    """Render a stable, model-agnostic product document."""
+
     attributes = json.dumps(
         item.get("attributes", {}),
         ensure_ascii=False,
         sort_keys=True,
     )
-    text = " ".join(
-        str(value)
-        for value in (
-            item.get("title", ""),
-            item.get("category", ""),
-            attributes,
-        )
-        if value
+    fields = (
+        ("title", item.get("title", "")),
+        ("category", item.get("category", "")),
+        ("brand", item.get("brand", "")),
+        ("description", item.get("description", "")),
+        ("keywords", item.get("keywords", "")),
+        ("attributes", attributes),
     )
-    return embed_text(text)
+    return "\n".join(
+        f"{name}: {value}"
+        for name, value in fields
+        if value and value != "{}"
+    )
+
+
+def embed_item(item: Mapping[str, Any]) -> list[float]:
+    return embed_text(render_item_text(item))
 
 
 __all__ = [
     "embed_item",
     "embed_text",
     "embedding_dimension",
+    "render_item_text",
 ]

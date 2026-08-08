@@ -4,10 +4,14 @@ from typing import Any
 import pytest
 
 import app.tools.item_search as item_module
+from app.agent.request_context import bind_request_context
 from app.tools.item_search import (
     _dedupe_and_rerank,
+    _fuse_embeddings,
     item_search,
 )
+from app.memory.context import bind_user_context
+from app.memory.store import preference_store
 from app.utils.thread_ctx import (
     bind_thread_context,
 )
@@ -20,11 +24,14 @@ def _raw_candidate(
     return {
         "item_id": item_id,
         "platform": "amazon",
+        "category_key": "travel-organizer",
+        "category": "旅行收纳",
         "title": f"商品 {item_id}",
         "price": 99.0,
         "currency": "CNY",
         "attributes": {
             "material": "nylon",
+            "weight_kg": 0.3,
         },
         "score": score,
     }
@@ -48,6 +55,19 @@ def test_dedupe_and_rerank() -> None:
     ] == ["b", "a", "c"]
     assert merged[0]["boost"] == pytest.approx(
         1.15
+    )
+
+
+def test_fuse_embeddings_is_normalized() -> None:
+    fused = _fuse_embeddings(
+        [1.0, 0.0],
+        [0.0, 1.0],
+        query_weight=0.75,
+        user_weight=0.25,
+    )
+
+    assert fused == pytest.approx(
+        [0.9486832981, 0.3162277660]
     )
 
 
@@ -164,6 +184,159 @@ async def test_recall_without_user_is_semantic_only(
 
     assert total == 1
     assert raw[0]["item_id"] == "a"
+
+
+@pytest.mark.asyncio
+async def test_recall_embeds_stored_preferences(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    user_id = "preference-user-test"
+    await preference_store.add_many(
+        user_id,
+        ["偏好静音机械键盘", "不要 RGB 灯"],
+    )
+
+    async def fake_semantic(
+        query: str,
+        platform: str,
+        top_k: int,
+    ) -> list[dict[str, Any]]:
+        return [_raw_candidate("a", 0.8)]
+
+    async def fake_personalized(
+        query: str,
+        platform: str,
+        top_k: int,
+        received_user_id: str,
+        preferences: list[str],
+    ) -> list[dict[str, Any]]:
+        assert received_user_id == user_id
+        assert set(preferences) == {
+            "偏好静音机械键盘",
+            "不要 RGB 灯",
+        }
+        return [_raw_candidate("b", 0.9)]
+
+    monkeypatch.setattr(
+        item_module,
+        "_semantic_recall",
+        fake_semantic,
+    )
+    monkeypatch.setattr(
+        item_module,
+        "_personalized_recall",
+        fake_personalized,
+    )
+
+    raw, _ = await item_module._recall(
+        "机械键盘",
+        "amazon",
+        20,
+        user_id,
+    )
+    assert {item["item_id"] for item in raw} == {"a", "b"}
+
+
+@pytest.mark.asyncio
+async def test_item_search_uses_request_user_context(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    received_user_ids: list[str | None] = []
+
+    async def fake_recall(
+        query: str,
+        platform: str,
+        top_k: int,
+        user_id: str | None,
+    ) -> tuple[list[dict[str, Any]], int]:
+        received_user_ids.append(user_id)
+        return [_raw_candidate("a", 0.9)], 1
+
+    async def noop(*args: Any, **kwargs: Any) -> bool:
+        return True
+
+    monkeypatch.setattr(item_module, "_recall", fake_recall)
+    monkeypatch.setattr(
+        item_module.monitor, "report_tool_start", noop
+    )
+    monkeypatch.setattr(
+        item_module.monitor, "report_tool_end", noop
+    )
+
+    with bind_thread_context("thread-context", tmp_path):
+        with bind_user_context("context-user"):
+            await item_search.ainvoke(
+                {
+                    "query": "机械键盘",
+                    "platform": "amazon",
+                }
+            )
+
+    assert received_user_ids == ["context-user"]
+
+
+@pytest.mark.asyncio
+async def test_item_search_applies_request_hard_constraints(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    matching = {
+        **_raw_candidate("matching", 0.9),
+        "platform": "aliexpress",
+        "category_key": "mechanical-keyboard",
+        "category": "机械键盘",
+        "price": 15.0,
+        "currency": "USD",
+        "attributes": {
+            "weight_kg": 0.8,
+            "switch_type": "青轴",
+            "connection_modes": ["USB-C", "2.4G", "蓝牙"],
+            "layout": "87键",
+        },
+    }
+    wrong_switch = {
+        **matching,
+        "item_id": "wrong-switch",
+        "attributes": {
+            **matching["attributes"],
+            "switch_type": "红轴",
+        },
+    }
+    over_budget = {
+        **matching,
+        "item_id": "over-budget",
+        "price": 80.0,
+    }
+
+    async def fake_recall(*args: Any, **kwargs: Any):
+        assert args[2] == 50
+        return [wrong_switch, over_budget, matching], 3
+
+    async def noop(*args: Any, **kwargs: Any) -> bool:
+        return True
+
+    monkeypatch.setattr(item_module, "_recall", fake_recall)
+    monkeypatch.setattr(item_module.monitor, "report_tool_start", noop)
+    monkeypatch.setattr(item_module.monitor, "report_tool_end", noop)
+
+    with bind_request_context(
+        "200元以内，青轴，无线，办公机械键盘"
+    ):
+        output = await item_search.ainvoke(
+            {
+                "query": "mechanical keyboard blue switch wireless",
+                "platform": "aliexpress",
+                "top_k": 5,
+            }
+        )
+
+    assert [item.item_id for item in output.candidates] == [
+        "matching"
+    ]
+    assert output.matched_total == 1
+    assert output.rejected_count == 2
+    assert output.no_match_reason is None
+    assert "轴体=青轴" in output.applied_constraints
 
 
 

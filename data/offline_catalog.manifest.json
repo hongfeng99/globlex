@@ -1,0 +1,36 @@
+{
+  "catalog_version": "offline-v2",
+  "schema_version": "2.0",
+  "data_mode": "synthetic",
+  "notice": "项目生成的离线模拟商品，仅用于功能演示，不代表平台实时价格、库存或销量。",
+  "deterministic": true,
+  "seed": 20260807,
+  "variants_per_platform": 14,
+  "item_count": 1008,
+  "platform_counts": {
+    "aliexpress": 252,
+    "amazon": 252,
+    "ebay": 252,
+    "shopee": 252
+  },
+  "category_counts": {
+    "保温杯": 56,
+    "充电宝": 56,
+    "徒步鞋": 56,
+    "旅行收纳": 56,
+    "旅行背包": 56,
+    "无线鼠标": 56,
+    "机械键盘": 56,
+    "瑜伽垫": 56,
+    "睡袋": 56,
+    "笔记本支架": 56,
+    "蓝牙耳机": 56,
+    "跑步鞋": 56,
+    "降噪耳机": 56,
+    "露营帐篷": 56,
+    "骑行头盔": 56,
+    "骑行套装": 56,
+    "骑行手套": 56,
+    "骑行服": 56
+  }
+}

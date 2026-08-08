@@ -1,10 +1,15 @@
 from __future__ import annotations
 
 import time
+from typing import Any
 
 from langchain_core.tools import tool
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
+from app.agent.request_context import (
+    get_search_candidates,
+    has_search_observations,
+)
 from app.api.monitor import monitor
 from app.recall.fx import to_base
 from app.tools.item_search import Candidate
@@ -24,6 +29,10 @@ class PricePoint(BaseModel):
     rating: float | None = None
     sales: int | None = None
     note: str | None = None
+    weight_kg: float | None = None
+    attributes: dict[str, Any] = Field(
+        default_factory=dict
+    )
 
 
 class PriceCompareOutput(BaseModel):
@@ -100,6 +109,14 @@ async def price_compare(
         )
 
     top_n = min(top_n, 30)
+    if has_search_observations():
+        # Four LLM child loops may summarize their observations in prose.
+        # Use the exact structured ItemSearch observations instead of asking
+        # the root model to reconstruct candidates from that prose.
+        candidates = [
+            Candidate.model_validate(item)
+            for item in get_search_candidates()
+        ]
     candidates = candidates[:100]
 
     await monitor.report_tool_start(
@@ -144,6 +161,19 @@ async def price_compare(
                 rating=candidate.rating,
                 sales=candidate.sales,
                 note=_pack_note(candidate),
+                weight_kg=(
+                    float(candidate.attributes["weight_kg"])
+                    if isinstance(
+                        candidate.attributes.get("weight_kg"),
+                        (int, float),
+                    )
+                    and not isinstance(
+                        candidate.attributes.get("weight_kg"),
+                        bool,
+                    )
+                    else None
+                ),
+                attributes=dict(candidate.attributes),
             )
         )
 

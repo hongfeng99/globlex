@@ -3,6 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+import pytest
+
 from app.recall.ann import AnnClient
 from app.recall.demo_index import build_demo_index
 from app.recall.local_embeddings import embed_text
@@ -10,7 +12,9 @@ from app.recall.local_embeddings import embed_text
 
 def test_build_demo_index_can_be_searched(
     tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
+    monkeypatch.setenv("TOWER_BACKEND", "hash")
     catalog_path = tmp_path / "items.json"
     index_path = tmp_path / "items.faiss"
     catalog_path.write_text(
@@ -43,6 +47,7 @@ def test_build_demo_index_can_be_searched(
     _, metadata_path, count = build_demo_index(
         catalog_path,
         index_path,
+        backend_name="hash",
     )
     results = AnnClient(index_path).search(
         embed_text("旅行收纳袋"),
@@ -52,4 +57,7 @@ def test_build_demo_index_can_be_searched(
 
     assert count == 2
     assert metadata_path.is_file()
+    assert index_path.with_suffix(
+        ".manifest.json"
+    ).is_file()
     assert results[0]["item_id"] == "travel-1"

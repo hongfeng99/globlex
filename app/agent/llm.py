@@ -9,6 +9,7 @@ from langchain_core.language_models.chat_models import (
 )
 from dotenv import load_dotenv
 
+from app.config import env_bool, env_int
 from app.utils.path_utils import PROJECT_ROOT
 
 
@@ -69,13 +70,39 @@ def _create_model(
     通过 OpenAI 兼容协议创建统一的聊天模型。
     """
 
+    base_url = _required_env("OPENAI_BASE_URL")
+    provider_kwargs: dict[str, object] = {}
+    normalized_url = base_url.casefold()
+    if any(
+        provider in normalized_url
+        for provider in (
+            "modelscope.cn",
+            "aliyuncs.com",
+            "dashscope.aliyun.com",
+        )
+    ):
+        # Qwen thinking mode rejects required/specific tool_choice on
+        # ModelScope and Alibaba Model Studio OpenAI-compatible endpoints.
+        provider_kwargs["extra_body"] = {
+            "enable_thinking": env_bool(
+                "LLM_ENABLE_THINKING",
+                False,
+            )
+        }
+
     return init_chat_model(
         model_name,
         model_provider="openai",
         api_key=_required_env("OPENAI_API_KEY"),
-        base_url=_required_env("OPENAI_BASE_URL"),
+        base_url=base_url,
         temperature=temperature,
         timeout=_timeout_seconds(),
+        max_retries=env_int(
+            "LLM_CLIENT_MAX_RETRIES",
+            2,
+            minimum=0,
+        ),
+        **provider_kwargs,
     )
 
 

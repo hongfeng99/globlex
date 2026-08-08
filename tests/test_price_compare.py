@@ -4,6 +4,10 @@ from typing import Any
 import pytest
 
 import app.tools.price_compare as price_module
+from app.agent.request_context import (
+    bind_request_context,
+    record_search_candidates,
+)
 from app.tools.item_search import Candidate
 from app.tools.price_compare import (
     price_compare,
@@ -176,3 +180,30 @@ async def test_price_compare_clamps_top_n(
     )
 
     assert len(output.ranked) == 30
+
+
+@pytest.mark.asyncio
+async def test_price_compare_uses_exact_observed_candidates() -> None:
+    real = _candidate(
+        "offline-real-1",
+        "shopee",
+        299,
+        "CNY",
+    )
+    hallucinated = _candidate(
+        "shp_004",
+        "shopee",
+        1,
+        "CNY",
+    )
+
+    with bind_request_context("骑行三件套，500元以下"):
+        record_search_candidates([real])
+        output = await price_compare.ainvoke(
+            {"candidates": [hallucinated]}
+        )
+
+    assert [point.item_id for point in output.ranked] == [
+        "offline-real-1"
+    ]
+    assert output.ranked[0].title == "商品 offline-real-1"

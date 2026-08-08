@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from collections.abc import Iterator
+from contextlib import contextmanager
 from contextvars import ContextVar
 from enum import Enum
 
@@ -46,6 +48,10 @@ class PhaseStateMachine:
                 default=Phase.PLANNING,
             )
         )
+        self._fixed: ContextVar[bool] = ContextVar(
+            "globex_phase_fixed",
+            default=False,
+        )
 
     def get_current_phase(self) -> Phase:
         return self._phase.get()
@@ -54,6 +60,26 @@ class PhaseStateMachine:
         self, phase: Phase
     ) -> None:
         self._phase.set(phase)
+
+    def is_fixed(self) -> bool:
+        return self._fixed.get()
+
+    @contextmanager
+    def bind(
+        self,
+        phase: Phase = Phase.PLANNING,
+        *,
+        fixed: bool = False,
+    ) -> Iterator[None]:
+        """Bind one request/task to an isolated phase and restore afterwards."""
+
+        phase_token = self._phase.set(phase)
+        fixed_token = self._fixed.set(fixed)
+        try:
+            yield
+        finally:
+            self._fixed.reset(fixed_token)
+            self._phase.reset(phase_token)
 
     def is_allowed(
         self, tool_name: str

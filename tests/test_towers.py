@@ -2,6 +2,7 @@ from typing import Any
 
 import httpx
 import pytest
+import math
 
 from app.recall.towers import TowerClient
 from app.recall.local_embeddings import (
@@ -26,12 +27,20 @@ async def test_local_tower_needs_no_http_service(
         }
     )
     user_vector = await client.encode_user("user-1")
+    preference_vector = await client.encode_user(
+        "user-1",
+        ["偏好轻量、防水的商品"],
+    )
 
     assert len(query_vector) == embedding_dimension()
     assert len(item_vector) == embedding_dimension()
     assert user_vector == [
         0.0
     ] * embedding_dimension()
+    assert math.sqrt(
+        sum(value * value for value in preference_vector)
+    ) == pytest.approx(1.0)
+    assert preference_vector != user_vector
 
 
 @pytest.mark.asyncio
@@ -71,6 +80,10 @@ async def test_tower_client_encodes_all_towers() -> None:
     assert await client.encode_user(
         "user-1"
     ) == [0.1, 0.2]
+    assert await client.encode_user(
+        "user-2",
+        ["偏好静音键盘"],
+    ) == [0.1, 0.2]
     assert await client.encode_query(
         "旅行收纳袋"
     ) == [0.1, 0.2]
@@ -85,6 +98,13 @@ async def test_tower_client_encodes_all_towers() -> None:
             "https://tower/user",
             {
                 "user_id": "user-1",
+            },
+        ),
+        (
+            "https://tower/user",
+            {
+                "user_id": "user-2",
+                "preferences": ["偏好静音键盘"],
             },
         ),
         (

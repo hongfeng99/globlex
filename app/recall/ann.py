@@ -11,6 +11,9 @@ from dotenv import load_dotenv
 
 from app.utils.path_utils import PROJECT_ROOT
 from app.config import env_bool
+from app.recall.embedding_backend import (
+    configured_embedding_identity,
+)
 
 
 load_dotenv(PROJECT_ROOT / ".env")
@@ -57,6 +60,42 @@ class AnnClient:
             if metadata is not None
             else None
         )
+
+    @staticmethod
+    def _validate_manifest(index_path: Path) -> None:
+        manifest_path = index_path.with_suffix(
+            ".manifest.json"
+        )
+        if not manifest_path.is_file():
+            return
+        raw_manifest = json.loads(
+            manifest_path.read_text(encoding="utf-8")
+        )
+        embedding = raw_manifest.get("embedding", {})
+        if not isinstance(embedding, dict):
+            raise ValueError("ANN 索引清单缺少 embedding 配置。")
+
+        expected = configured_embedding_identity()
+        if expected["backend"] == "http":
+            return
+        identity_fields = (
+            "backend",
+            "model_name",
+            "model_revision",
+            "query_prefix",
+            "item_prefix",
+        )
+        mismatches = [
+            field
+            for field in identity_fields
+            if embedding.get(field) != expected[field]
+        ]
+        if mismatches:
+            raise RuntimeError(
+                "ANN 索引与当前 Embedding 配置不一致（"
+                + ", ".join(mismatches)
+                + "）；请运行 python scripts/build_demo_index.py 重建索引。"
+            )
 
     def _resolve_index_path(self) -> Path:
         if self._index_path is not None:
@@ -128,6 +167,7 @@ class AnnClient:
         self._meta = self._load_meta(
             metadata_path
         )
+        self._validate_manifest(index_path)
 
     def search(
         self,
@@ -173,43 +213,68 @@ class AnnClient:
                 "embedding 必须是一维向量。"
             )
 
-        scores, indexes = self._index.search(
-            vector,
-            top_k * 3,
+        index_dimension = getattr(
+            self._index, "d", None
         )
-
-        results: list[dict[str, Any]] = []
-
-        for score, index in zip(
-            scores[0],
-            indexes[0],
+        if (
+            isinstance(index_dimension, int)
+            and vector.shape[1] != index_dimension
         ):
-            if int(index) < 0:
-                continue
-
-            metadata = self._meta.get(
-                int(index)
+            raise ValueError(
+                "查询向量维度与 ANN 索引不一致："
+                f"{vector.shape[1]} != {index_dimension}。"
+                "请使用同一 Embedding 配置重建索引。"
             )
 
-            if (
-                metadata
-                and str(
-                    metadata.get(
-                        "platform",
-                        "",
-                    )
-                ).lower()
-                == normalized_platform
-            ):
-                results.append(
-                    {
-                        **metadata,
-                        "score": float(score),
-                    }
-                )
+        index_size = getattr(
+            self._index, "ntotal", None
+        )
+        candidate_k = top_k * 3
+        if isinstance(index_size, int):
+            candidate_k = min(
+                candidate_k, index_size
+            )
 
-            if len(results) >= top_k:
+        results: list[dict[str, Any]] = []
+        while candidate_k > 0:
+            scores, indexes = self._index.search(
+                vector,
+                candidate_k,
+            )
+            results = []
+            for score, index in zip(
+                scores[0],
+                indexes[0],
+            ):
+                if int(index) < 0:
+                    continue
+                metadata = self._meta.get(int(index))
+                if (
+                    metadata
+                    and str(
+                        metadata.get("platform", "")
+                    ).lower()
+                    == normalized_platform
+                ):
+                    results.append(
+                        {
+                            **metadata,
+                            "score": float(score),
+                        }
+                    )
+                if len(results) >= top_k:
+                    break
+
+            if (
+                len(results) >= top_k
+                or not isinstance(index_size, int)
+                or candidate_k >= index_size
+            ):
                 break
+            candidate_k = min(
+                index_size,
+                max(candidate_k + 1, candidate_k * 2),
+            )
 
         return results
 

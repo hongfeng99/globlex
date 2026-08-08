@@ -94,3 +94,48 @@ def test_blank_query_is_rejected() -> None:
         )
 
     assert response.status_code == 422
+
+
+def test_ready_reports_category_kb(
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        server_module,
+        "get_category_kb_status",
+        lambda: {
+            "available": True,
+            "document_count": 108,
+        },
+    )
+    monkeypatch.setenv("CATEGORY_KB_REQUIRED", "true")
+
+    with TestClient(server_module.app) as client:
+        response = client.get("/ready")
+
+    assert response.status_code == 200
+    assert response.json()["category_kb"] == {
+        "available": True,
+        "document_count": 108,
+    }
+
+
+def test_ready_fails_when_required_kb_is_missing(
+    monkeypatch,
+) -> None:
+    monkeypatch.setattr(
+        server_module,
+        "get_category_kb_status",
+        lambda: {
+            "available": False,
+            "reason": "index_missing",
+        },
+    )
+    monkeypatch.setenv("CATEGORY_KB_REQUIRED", "true")
+
+    with TestClient(server_module.app) as client:
+        response = client.get("/ready")
+
+    assert response.status_code == 503
+    assert response.json()["detail"]["category_kb"][
+        "reason"
+    ] == "index_missing"

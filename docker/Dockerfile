@@ -4,10 +4,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 COPY pyproject.toml ./
 COPY app ./app
-RUN pip install --no-cache-dir .
+RUN pip install --no-cache-dir ".[embeddings]"
 COPY scripts ./scripts
-COPY data/demo_items.json ./data/demo_items.json
+COPY data/offline_catalog.json ./data/offline_catalog.json
+ENV TOWER_BACKEND=sentence_transformers \
+    TOWER_MODEL_NAME=intfloat/multilingual-e5-small \
+    TOWER_DEVICE=cpu
+RUN python scripts/generate_offline_category_kb.py
 RUN python scripts/build_demo_index.py
+ENV TOWER_LOCAL_FILES_ONLY=true
 
 FROM base AS dev
 ENV AGENT_LOOP_MAX_ITERATIONS=100 \

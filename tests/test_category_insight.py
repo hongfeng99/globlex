@@ -5,8 +5,16 @@ import pytest
 import app.tools.category_insight as module
 from app.recall.category_kb import CategoryCard
 from app.tools.category_insight import (
+    Bestseller,
+    CategoryRecallResult,
+    CategoryInsightOutput,
     _build_hybrid_body,
     category_insight,
+    is_effective_category_insight,
+)
+from app.recall.category_norm import (
+    find_category_alias,
+    normalize_category,
 )
 
 
@@ -20,7 +28,7 @@ def _card(
 ) -> CategoryCard:
     return CategoryCard(
         card_id=card_id,
-        category="旅行三件套",
+        category="旅行收纳",
         card_type=card_type,
         summary=summary,
         raw_evidence=evidence or [],
@@ -31,7 +39,7 @@ def _card(
 
 def test_hybrid_body_contains_knn_and_bm25() -> None:
     body = _build_hybrid_body(
-        "旅行三件套",
+        "旅行收纳",
         [0.1, 0.2],
     )
     queries = body["query"]["hybrid"][
@@ -39,10 +47,54 @@ def test_hybrid_body_contains_knn_and_bm25() -> None:
     ]
 
     assert "knn" in queries[0]
-    assert "multi_match" in queries[1]
+    assert queries[0]["knn"]["content_vector"][
+        "filter"
+    ] == {"term": {"category.keyword": "旅行收纳"}}
+    multi_match = queries[1]["bool"]["must"][0][
+        "multi_match"
+    ]
+    assert multi_match["analyzer"] == (
+        "standard"
+    )
     assert body["_source"] == {
         "excludes": ["content_vector"]
     }
+
+
+def test_cycling_bundle_alias_is_normalized() -> None:
+    assert normalize_category("骑行三件套") == "骑行套装"
+    assert normalize_category("骑行服三件套") == "骑行套装"
+    assert find_category_alias(
+        "我想购买骑行三件套，预算 800 元"
+    ) == "骑行套装"
+
+
+def test_effective_insight_requires_structure_and_confidence(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("CATEGORY_INSIGHT_MIN_CONFIDENCE", "0.45")
+    result = CategoryInsightOutput(
+        category="骑行套装",
+        components=["骑行上衣", "骑行裤"],
+        bestsellers=[
+            Bestseller(
+                name="示例套装",
+                typical_price_cny=299,
+                why_popular="透气",
+            )
+        ],
+        attributes=[],
+        price_tiers=[],
+        confidence=0.86,
+    )
+
+    assert is_effective_category_insight(result)
+    assert not is_effective_category_insight(
+        result.model_copy(update={"components": []})
+    )
+    assert not is_effective_category_insight(
+        result.model_copy(update={"confidence": 0.2})
+    )
 
 
 @pytest.mark.asyncio
@@ -52,10 +104,10 @@ async def test_category_insight_extracts_cards(
     async def fake_recall(
         category: str,
         top_k: int,
-    ) -> list[CategoryCard]:
-        assert category == "旅行三件套"
+    ) -> CategoryRecallResult:
+        assert category == "旅行收纳"
         assert top_k == 15
-        return [
+        return CategoryRecallResult(cards=[
             _card(
                 "b1",
                 "bestseller",
@@ -74,7 +126,7 @@ async def test_category_insight_extracts_cards(
                 "price_range",
                 "便宜款 60-150 元",
             ),
-        ]
+        ])
 
     async def no_event(
         *args: Any,
@@ -105,7 +157,7 @@ async def test_category_insight_extracts_cards(
         }
     )
 
-    assert result.category == "旅行三件套"
+    assert result.category == "旅行收纳"
     assert result.bestsellers[0].name == (
         "多功能收纳包"
     )
@@ -117,3 +169,5 @@ async def test_category_insight_extracts_cards(
         150.0,
     )
     assert result.confidence == 0.8
+    assert result.knowledge_base_available is True
+    assert result.degraded_reason is None
